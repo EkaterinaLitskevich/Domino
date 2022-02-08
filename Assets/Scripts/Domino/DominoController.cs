@@ -8,6 +8,7 @@ public class DominoController : MonoBehaviour
 {
     [SerializeField] private int _amountHalfs;
     [SerializeField] private Half _halfPrefab;
+    [SerializeField] private BoxCollider2D _collider;
     
     private List<Half> _halfs = new List<Half>();
     private List<Half> _halfForCompare = new List<Half>();
@@ -18,6 +19,7 @@ public class DominoController : MonoBehaviour
     {
         FillArray();
         FillGrid();
+        SetCollider();
     }
 
     private void FillArray()
@@ -54,5 +56,11 @@ public class DominoController : MonoBehaviour
         {
             _halfForCompare.Add(_halfs[i]);
         }
+    }
+
+    private void SetCollider()
+    {
+        Vector2 sizeCollider = _collider.size;
+        _collider.size = new Vector2(sizeCollider.x, sizeCollider.y * _amountHalfs);
     }
 }
