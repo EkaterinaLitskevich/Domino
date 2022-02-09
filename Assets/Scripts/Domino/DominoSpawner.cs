@@ -14,21 +14,30 @@ namespace Domino
         private List<DominoController> _dominoControllersStand = new List<DominoController>();
         private List<DominoController> _dominoControllersGame = new List<DominoController>();
 
-        private void Start()
+        public void CreateDomino()
         {
             CreateDomino(_dominoControllersStand, _pointPositionUp, true);
             CreateDomino(_dominoControllersGame, _pointPositionDown, false);
+        }
+
+        public void DestroyDominoGame()
+        {
+            for (int i = _dominoControllersGame.Count - 1; i >= 0; i--)
+            {
+                Destroy(_dominoControllersGame[i].gameObject);
+                _dominoControllersGame.RemoveAt(i);
+            }
         }
 
         private void CreateDomino(List<DominoController> dominoControllers, Transform point, bool isStand)
         {
             for (int i = 0; i < _amountDomino; i++)
             {
-                DominoController dominoController = Instantiate(_dominoPrefab, point.position, transform.rotation, transform);
+                DominoController dominoController =
+                    Instantiate(_dominoPrefab, point.position, transform.rotation, transform);
                 dominoController.IsStand = isStand;
                 dominoControllers.Add(dominoController);
             }
         }
-    
     }
 }

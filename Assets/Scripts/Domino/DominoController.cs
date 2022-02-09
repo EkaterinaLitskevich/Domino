@@ -21,7 +21,10 @@ namespace Domino
         private void Start()
         {
             _halfArray = _amountHalfs / 2;
-            
+        }
+
+        public void Initial()
+        {
             FillArray();
             FillGrid();
             SetCollider();
@@ -70,7 +73,7 @@ namespace Domino
         
         private void Rotate()
         {
-            transform.Rotate(0,0,ValueRotateZ);
+            transform.Rotate(0,0, ValueRotateZ);
             SetElementForArray();
         }
 
@@ -78,7 +81,7 @@ namespace Domino
         {
             foreach (var t in _halfs)
             {
-                Debug.Log("elevent: " + t);
+                Debug.Log("element: " + t);
             }
             
             Half half;
@@ -95,7 +98,7 @@ namespace Domino
 
                 foreach (var t in _halfs)
                 {
-                    Debug.Log("elevent: " + t);
+                    Debug.Log("element: " + t);
                 }
                 int index = 0;
                 for (int i = _halfs.Count - 1; i >= _halfArray; i--) //bottom numbers in reverse order
@@ -132,11 +135,11 @@ namespace Domino
 
             foreach (var t in _halfs)
             {
-                Debug.Log("elevent: " + t);
+                Debug.Log("element: " + t);
             }
         }
 
-        private void Update()
+        public void UpdateManual()
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {

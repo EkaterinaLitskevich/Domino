@@ -16,8 +16,8 @@ public class Half : MonoBehaviour
     
     private int _value;
 
-    private void Start()
-    {
+    public void Initial()
+    {   
         SetValue();
         SetImage();
     }
