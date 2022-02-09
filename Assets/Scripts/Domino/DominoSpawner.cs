@@ -1,43 +1,49 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 namespace Domino
 {
     public class DominoSpawner : MonoBehaviour
     {
         [SerializeField] private DominoController _dominoPrefab;
-        [SerializeField] private Transform _pointPositionUp;
-        [SerializeField] private Transform _pointPositionDown;
-        [SerializeField] private int _amountDomino;
+        [SerializeField] private int _amountDominoStand;
+        [SerializeField] private int _amountDominoGame;
 
         private List<DominoController> _dominoControllersStand = new List<DominoController>();
         private List<DominoController> _dominoControllersGame = new List<DominoController>();
 
-        public void CreateDomino()
+        [Inject] private DominoPlacement _dominoPlacement;
+
+        public void CreateStartDomino()
         {
-            CreateDomino(_dominoControllersStand, _pointPositionUp, true);
-            CreateDomino(_dominoControllersGame, _pointPositionDown, false);
+            InitialDomino(_dominoControllersStand, _amountDominoStand, true);
+            InitialDomino(_dominoControllersGame, _amountDominoGame, false);
         }
 
-        public void DestroyDominoGame()
+        private void InitialDomino(List<DominoController> dominoControllers, int amountDomino, bool isStand)
         {
-            for (int i = _dominoControllersGame.Count - 1; i >= 0; i--)
+            for (int i = 0; i < amountDomino; i++)
             {
-                Destroy(_dominoControllersGame[i].gameObject);
-                _dominoControllersGame.RemoveAt(i);
-            }
-        }
+                DominoController dominoController = CreateDomino(isStand);
 
-        private void CreateDomino(List<DominoController> dominoControllers, Transform point, bool isStand)
-        {
-            for (int i = 0; i < _amountDomino; i++)
-            {
-                DominoController dominoController =
-                    Instantiate(_dominoPrefab, point.position, transform.rotation, transform);
-                dominoController.IsStand = isStand;
+                _dominoPlacement.PlaceDomino(dominoController, isStand);
+
                 dominoControllers.Add(dominoController);
+                
+                dominoController.Initial();
             }
+        }
+        
+        private DominoController CreateDomino(bool isStand)
+        {
+            DominoController dominoController =
+                Instantiate(_dominoPrefab, transform);
+            dominoController.IsStand = isStand;
+
+            return dominoController;
         }
     }
 }
+

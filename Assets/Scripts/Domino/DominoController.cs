@@ -37,7 +37,6 @@ namespace Domino
             for (int i = 0; i < _amountHalfs; i++)
             {
                 half = Instantiate(_halfPrefab, transform.position, transform.rotation, null);
-                half.name = "Half " + i;
                 _halfs.Add(half);
             }
         }
@@ -108,9 +107,7 @@ namespace Domino
                     _halfs[_halfArray + index] = half;
                     index++;
                 }
-                
-  
-                
+
                 /*for (int i = 0; i < _halfArray / 2; i++)
                 {
                     Debug.Log("_halfArray / 2 = " + _halfArray / 2);
