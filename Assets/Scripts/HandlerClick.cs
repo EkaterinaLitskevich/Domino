@@ -7,18 +7,22 @@ using UnityEngine.EventSystems;
 
 public class HandlerClick : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
 {
+    public event Action<PointerEventData> OnDragObj;
+    public event Action<PointerEventData> OnBeginDragObj;
+    public event Action<PointerEventData> OnEndDragObj;
+
     public void OnDrag(PointerEventData eventData)
     {
-        transform.position = Vector2.Lerp(transform.position, eventData.position, 1f);
+        OnDragObj?.Invoke(eventData);
     }
     
     public void OnBeginDrag(PointerEventData eventData)
     {
-        Debug.Log("OnBeginDrag");
+        OnBeginDragObj?.Invoke(eventData);
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        Debug.Log("OnEndDrag");
+        OnEndDragObj?.Invoke(eventData);
     }
 }

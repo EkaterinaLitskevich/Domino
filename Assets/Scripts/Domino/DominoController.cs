@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Domino
 {
@@ -10,13 +11,47 @@ namespace Domino
         
         [SerializeField] private Half _halfPrefab;
         [SerializeField] private BoxCollider2D _collider;
+        [SerializeField] private RectTransform _rectTransform;
+        [SerializeField] private HandlerClick _handlerClick;
         [SerializeField] private int _amountHalfs;
+        [SerializeField] private float _plusSize;
     
         private List<Half> _halfs = new List<Half>();
         private List<Half> _halfForCompare = new List<Half>();
+        
+        private Vector2 _defaultSize;
+        private Vector2 _defaultSizeDelta;
 
         private int _halfArray;
         public bool IsStand { get; set; }
+        public RectTransform RectTransform 
+        { 
+            get => _rectTransform; 
+            set => _rectTransform = value; 
+        }
+        public HandlerClick HandlerClick 
+        { 
+            get => _handlerClick; 
+            set => _handlerClick = value; 
+        }
+        
+        public Vector2 DefaultSizeDelta 
+        { 
+            get => _defaultSizeDelta; 
+            set => _defaultSizeDelta = value; 
+        }
+
+        private void OnEnable()
+        {
+            //_handlerClick.OnBeginDragObj += SetSize;
+            //_handlerClick.OnEndDragObj += SetSize;
+        }
+        
+        private void OnDisable()
+        {
+            //_handlerClick.OnBeginDragObj -= SetSize;
+            //_handlerClick.OnEndDragObj -= SetSize;
+        }
 
         private void Start()
         {
@@ -27,7 +62,18 @@ namespace Domino
         {
             FillArray();
             FillGrid();
-            SetCollider();
+            SetSizeCollider();
+            //CalculateDefoltSizeDelta();
+        }
+
+        private void CalculateDefoltSizeDelta()
+        {
+            for (int i = 0; i < _halfs.Count; i++)
+            {
+                _defaultSize += new Vector2(0, _halfs[i].RectTransform.sizeDelta.y);
+            }
+            
+            Debug.Log("_defaultSize = " + _defaultSize);
         }
 
         private void FillArray()
@@ -64,10 +110,22 @@ namespace Domino
             }
         }
 
-        private void SetCollider()
+        private void SetSizeCollider()
         {
             Vector2 sizeCollider = _collider.size;
             _collider.size = new Vector2(sizeCollider.x, sizeCollider.y * _amountHalfs);
+        }
+
+        private void SetSize(PointerEventData eventData)
+        {
+            if (_rectTransform.sizeDelta == _defaultSize)
+            {
+                _rectTransform.sizeDelta = _defaultSize * _plusSize;
+            }
+            else
+            {
+                _rectTransform.sizeDelta = _defaultSize;
+            }
         }
         
         private void Rotate()
@@ -136,7 +194,7 @@ namespace Domino
             }
         }
 
-        public void UpdateManual()
+        public void Update()
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {

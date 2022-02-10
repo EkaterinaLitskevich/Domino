@@ -9,11 +9,16 @@ using Random = System.Random;
 
 public class Half : MonoBehaviour
 {
-
-    
+    [SerializeField] private RectTransform _rectTransform;
     [SerializeField] private Image _image;
     
     private int _value;
+
+    public RectTransform RectTransform
+    {
+        get => _rectTransform;
+        set => _rectTransform = value;
+    }
 
     public void Initial()
     {   
