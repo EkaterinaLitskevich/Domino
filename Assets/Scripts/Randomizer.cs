@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = System.Random;
 
-public class RandomController : MonoBehaviour
+public class Randomizer : MonoBehaviour
 {
     public int GetRandomValue(int minValue, int maxValue)
     {

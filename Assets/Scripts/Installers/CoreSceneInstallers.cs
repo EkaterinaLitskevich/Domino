@@ -9,13 +9,27 @@ namespace Installers
     {
         [SerializeField] private string _nameDominoSpawnerPath;
         [SerializeField] private string _nameLevelControllerPath;
+        [SerializeField] private string _nameRandomizerPath;
         [SerializeField] private DominoPlacement _dominoPlacement;
         [SerializeField] private Canvas _canvas;
         public override void InstallBindings()
         {
+            //BindRandomizer();
             BindDominoPlacement();
             BindDominoSpawner();
             BindLevelController();
+        }
+
+        private async void BindRandomizer()
+        {
+            var loadRequest = Resources.LoadAsync<Randomizer>(_nameRandomizerPath);
+
+            await UniTask.WaitUntil(() => loadRequest.isDone);
+            
+            Randomizer randomizer = Container
+                .InstantiatePrefabForComponent<Randomizer>(loadRequest.asset);
+
+            BindObject(randomizer);
         }
 
         private void BindDominoPlacement()

@@ -23,7 +23,7 @@ namespace Domino
             _halfArray = _amountHalfs / 2;
         }
 
-        public void Initial()
+        public void Initial(int randomValue)
         {
             FillArray();
             FillGrid();

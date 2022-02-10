@@ -2,11 +2,15 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
+using Random = UnityEngine.Random;
 
 namespace Domino
 {
     public class DominoSpawner : MonoBehaviour
     {
+        private const int MaxValue = 6;
+        private const int MinValue = 0;
+        
         [SerializeField] private DominoController _dominoPrefab;
         [SerializeField] private int _amountDominoStand;
         [SerializeField] private int _amountDominoGame;
@@ -15,7 +19,8 @@ namespace Domino
         private List<DominoController> _dominoControllersGame = new List<DominoController>();
 
         [Inject] private DominoPlacement _dominoPlacement;
-
+        //[Inject] private Randomizer _randomizer;
+        
         public void CreateStartDomino()
         {
             InitialDomino(_dominoControllersStand, _amountDominoStand, true);
@@ -31,8 +36,9 @@ namespace Domino
                 _dominoPlacement.PlaceDomino(dominoController, isStand);
 
                 dominoControllers.Add(dominoController);
-                
-                dominoController.Initial();
+
+                //int randomValue = _randomizer.GetRandomValue(MinValue, MaxValue);
+                dominoController.Initial(0);
             }
         }
         
