@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1733558574096082426}
   - component: {fileID: 756736582258152989}
   - component: {fileID: 7518932116749311912}
+  - component: {fileID: -1481351733535056761}
   m_Layer: 5
   m_Name: BoxDomino
   m_TagString: Untagged
@@ -51,9 +52,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e890184fce32fb47b35e0f7b9905bb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _amountHalfs: 2
   _halfPrefab: {fileID: 1355061132271712086, guid: ae3fdf44e54627e4c92cc199fdb39388, type: 3}
   _collider: {fileID: 756736582258152989}
+  _amountHalfs: 2
 --- !u!114 &1733558574096082426
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -118,3 +119,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 0
   m_VerticalFit: 2
+--- !u!114 &-1481351733535056761
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3879301507220697769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 971249756b6325c43a7c79ff9bb22cda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -9,8 +9,7 @@ using Random = System.Random;
 
 public class Half : MonoBehaviour
 {
-    private const int MaxValue = 6;
-    private const int MinValue = 0;
+
     
     [SerializeField] private Image _image;
     
@@ -24,9 +23,7 @@ public class Half : MonoBehaviour
 
     private void SetValue()
     {
-        Random random = new Random();
-
-        _value = random.Next(MinValue, MaxValue + 1);
+        
     }
 
     private void SetImage()
