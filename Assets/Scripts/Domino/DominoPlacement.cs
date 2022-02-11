@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
@@ -37,7 +39,6 @@ namespace Domino
             dominoController.HandlerClick.OnDragObj += MoveDomino;
             dominoController.HandlerClick.OnBeginDragObj += BeginDragDomino;
             dominoController.HandlerClick.OnEndDragObj += EndDragDomino;
-            //_dominoController.HandlerClick.OnEndDragObj += SetPositionDomino;
         }
 
         private void MoveDomino(PointerEventData eventData)
@@ -51,7 +52,11 @@ namespace Domino
 
         private void EndDragDomino(PointerEventData eventData)
         {
-            _dominoCintrollerUsed = null;
+            if (_dominoCintrollerUsed != null)
+            {
+                SetPositionDomino(eventData);
+                _dominoCintrollerUsed = null;
+            }
         }
         
         private void BeginDragDomino(PointerEventData eventData)
@@ -63,7 +68,10 @@ namespace Domino
 
             if (eventData.pointerCurrentRaycast.gameObject.transform.parent.TryGetComponent(out DominoController dominoController))
             {
-                _dominoCintrollerUsed = dominoController;
+                if (!dominoController.IsStand)
+                {
+                    _dominoCintrollerUsed = dominoController;
+                }
             }
         }
 
@@ -71,8 +79,9 @@ namespace Domino
         {
             if (eventData.pointerCurrentRaycast.gameObject.transform.parent.TryGetComponent(out DominoController dominoController))
             {
-                RaycastHit2D hit = Physics2D.CircleCast(dominoController.transform.position, 1, Vector2.zero);
-
+                RaycastHit2D hit =
+                    Physics2D.CircleCast(dominoController.transform.position, 200,Vector2.zero);
+                
                 if (hit.collider == null)
                 {
                     return;
@@ -80,7 +89,11 @@ namespace Domino
 
                 if (hit.collider.TryGetComponent(out DominoController standDominoController))
                 {
-                    CalculatePosition(dominoController, standDominoController);
+                    if (standDominoController.IsStand)
+                    {
+                        CalculatePosition(dominoController, standDominoController);
+                        dominoController.IsStand = true;
+                    }
                 }
             }
         }
@@ -92,12 +105,8 @@ namespace Domino
 
             float newPositionY = standDominoController.RectTransform.anchoredPosition.y - halfStandDominoSize - _offsetBetweenDomino - halfDominoControllerSize;
             float newPositionX = standDominoController.RectTransform.anchoredPosition.x;
-            Debug.Log("newPositionY = " + newPositionY);
-            Debug.Log("newPositionX = " + newPositionX);
 
-            Debug.Log("dominoController.RectTransform.anchoredPosition" + dominoController.RectTransform.anchoredPosition);
-            dominoController.RectTransform.anchoredPosition = new Vector2(newPositionX ,newPositionY); 
-            Debug.Log("new" + dominoController.RectTransform.anchoredPosition);
+            dominoController.RectTransform.anchoredPosition = new Vector2(newPositionX ,newPositionY);
         }
 
         private RectTransform GetPointPosition(List<RectTransform> points)

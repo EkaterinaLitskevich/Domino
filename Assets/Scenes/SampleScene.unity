@@ -813,7 +813,7 @@ MonoBehaviour:
   - {fileID: 284157947}
   - {fileID: 2036567546}
   - {fileID: 1125657438}
-  _offsetBetweenDomino: 0
+  _offsetBetweenDomino: 10
 --- !u!114 &1129352540
 MonoBehaviour:
   m_ObjectHideFlags: 0

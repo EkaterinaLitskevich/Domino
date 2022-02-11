@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -64,10 +65,10 @@ namespace Domino
             FillArray();
             FillGrid();
             SetSizeCollider();
-            //CalculateDefoltSizeDelta();
+            CalculateDefaultSizeDelta();
         }
 
-        private void CalculateDefoltSizeDelta()
+        private void CalculateDefaultSizeDelta()
         {
             for (int i = 0; i < _halfs.Count; i++)
             {
@@ -117,13 +118,16 @@ namespace Domino
 
         private void SetSize(PointerEventData eventData)
         {
-            if (transform.localScale == _defaultSize)
+            if (!IsStand)
             {
-                transform.localScale = _defaultSize * _plusSize;
-            }
-            else
-            {
-                transform.localScale = _defaultSize;
+                if (transform.localScale == _defaultSize)
+                {
+                    transform.localScale = _defaultSize * _plusSize;
+                }
+                else
+                {
+                    transform.localScale = _defaultSize;
+                }
             }
         }
         
