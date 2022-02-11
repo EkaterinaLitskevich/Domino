@@ -16,6 +16,8 @@ namespace Domino
 
         private DominoController _dominoCintrollerUsed;
 
+        private Vector2 _startPositionDomino;
+
         public void PlaceDomino(DominoController domino, bool isStand)
         {
             SubscribeDrag(domino);
@@ -36,8 +38,8 @@ namespace Domino
 
         private void SubscribeDrag(DominoController dominoController)
         {
-            dominoController.HandlerClick.OnDragObj += MoveDomino;
             dominoController.HandlerClick.OnBeginDragObj += BeginDragDomino;
+            dominoController.HandlerClick.OnDragObj += MoveDomino;
             dominoController.HandlerClick.OnEndDragObj += EndDragDomino;
         }
 
@@ -54,7 +56,7 @@ namespace Domino
         {
             if (_dominoCintrollerUsed != null)
             {
-                SetPositionDomino(eventData);
+                PlacementDominoNextToDomino(eventData);
                 _dominoCintrollerUsed = null;
             }
         }
@@ -71,30 +73,38 @@ namespace Domino
                 if (!dominoController.IsStand)
                 {
                     _dominoCintrollerUsed = dominoController;
+                    _startPositionDomino = dominoController.RectTransform.anchoredPosition;
+                    Debug.Log("_startPositionDomino = " + _startPositionDomino);
                 }
             }
         }
 
-        private void SetPositionDomino(PointerEventData eventData)
+        private void PlacementDominoNextToDomino(PointerEventData eventData)
         {
-            if (eventData.pointerCurrentRaycast.gameObject.transform.parent.TryGetComponent(out DominoController dominoController))
-            {
-                RaycastHit2D hit =
-                    Physics2D.CircleCast(dominoController.transform.position, 200,Vector2.zero);
-                
-                if (hit.collider == null)
-                {
-                    return;
-                }
+            RaycastHit2D hit =
+                Physics2D.CircleCast(_dominoCintrollerUsed.transform.position, 200, Vector2.zero);
 
-                if (hit.collider.TryGetComponent(out DominoController standDominoController))
+            if (hit.collider == null)
+            {
+                _dominoCintrollerUsed.RectTransform.anchoredPosition = _startPositionDomino;
+                return;
+            }
+
+            if (hit.collider.TryGetComponent(out DominoController standDominoController))
+            {
+                if (standDominoController.IsStand)
                 {
-                    if (standDominoController.IsStand)
-                    {
-                        CalculatePosition(dominoController, standDominoController);
-                        dominoController.IsStand = true;
-                    }
+                    CalculatePosition(_dominoCintrollerUsed, standDominoController);
+                    _dominoCintrollerUsed.IsStand = true;
                 }
+                else
+                {
+                    _dominoCintrollerUsed.RectTransform.anchoredPosition = _startPositionDomino;
+                }
+            }
+            else
+            {
+                _dominoCintrollerUsed.RectTransform.anchoredPosition = _startPositionDomino;
             }
         }
 
@@ -103,8 +113,9 @@ namespace Domino
             float halfStandDominoSize = standDominoController.DefaultSizeDelta.y / 2;
             float halfDominoControllerSize = dominoController.DefaultSizeDelta.y / 2;
 
-            float newPositionY = standDominoController.RectTransform.anchoredPosition.y - halfStandDominoSize - _offsetBetweenDomino - halfDominoControllerSize;
-            float newPositionX = standDominoController.RectTransform.anchoredPosition.x;
+            Vector2 anchoredPosition = standDominoController.RectTransform.anchoredPosition;
+            float newPositionY = anchoredPosition.y - halfStandDominoSize - _offsetBetweenDomino - halfDominoControllerSize;
+            float newPositionX = anchoredPosition.x;
 
             dominoController.RectTransform.anchoredPosition = new Vector2(newPositionX ,newPositionY);
         }
