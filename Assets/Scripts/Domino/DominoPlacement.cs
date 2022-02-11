@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using DragAndDrop;
+using UniRx;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -38,43 +40,49 @@ namespace Domino
 
         private void SubscribeDrag(DominoController dominoController)
         {
-            dominoController.HandlerClick.OnBeginDragObj += BeginDragDomino;
-            dominoController.HandlerClick.OnDragObj += MoveDomino;
-            dominoController.HandlerClick.OnEndDragObj += EndDragDomino;
+            var disposable = new CompositeDisposable();
+            
+            dominoController.HandlerClick.Trigger.Where(result => 
+                result.Key.Equals(KeysStorage.BeginDrag)).Subscribe(BeginDragDomino).AddTo(disposable); 
+            
+            dominoController.HandlerClick.Trigger.Where(result 
+                => result.Key.Equals(KeysStorage.Drag)).Subscribe(MoveDomino).AddTo(disposable); 
+            
+            dominoController.HandlerClick.Trigger.Where(result =>
+                result.Key.Equals(KeysStorage.EndDrag)).Subscribe(EndDragDomino).AddTo(disposable);
         }
 
-        private void MoveDomino(PointerEventData eventData)
+        private void MoveDomino(CallBack callBack)
         {
             if (_dominoCintrollerUsed != null)
             {
                 _dominoCintrollerUsed.transform.position =
-                    Vector2.Lerp(_dominoCintrollerUsed.transform.position, eventData.position, 1f);
+                    Vector2.Lerp(_dominoCintrollerUsed.transform.position, callBack.PointerData.position, 1f);
             }
         }
 
-        private void EndDragDomino(PointerEventData eventData)
+        private void EndDragDomino(CallBack callBack)
         {
             if (_dominoCintrollerUsed != null)
             {
-                PlacementDominoNextToDomino(eventData);
+                PlacementDominoNextToDomino(callBack.PointerData);
                 _dominoCintrollerUsed = null;
             }
         }
         
-        private void BeginDragDomino(PointerEventData eventData)
+        private void BeginDragDomino(CallBack callBack)
         {
-            if (eventData.pointerCurrentRaycast.gameObject == null)
+            if (callBack.PointerData.pointerCurrentRaycast.gameObject == null)
             {
                 return;
             }
 
-            if (eventData.pointerCurrentRaycast.gameObject.transform.parent.TryGetComponent(out DominoController dominoController))
+            if (callBack.PointerData.pointerCurrentRaycast.gameObject.transform.parent.TryGetComponent(out DominoController dominoController))
             {
                 if (!dominoController.IsStand)
                 {
                     _dominoCintrollerUsed = dominoController;
                     _startPositionDomino = dominoController.RectTransform.anchoredPosition;
-                    Debug.Log("_startPositionDomino = " + _startPositionDomino);
                 }
             }
         }
@@ -84,9 +92,10 @@ namespace Domino
             RaycastHit2D hit =
                 Physics2D.CircleCast(_dominoCintrollerUsed.transform.position, 200, Vector2.zero);
 
+            _dominoCintrollerUsed.RectTransform.anchoredPosition = _startPositionDomino;
+
             if (hit.collider == null)
             {
-                _dominoCintrollerUsed.RectTransform.anchoredPosition = _startPositionDomino;
                 return;
             }
 
@@ -97,14 +106,6 @@ namespace Domino
                     CalculatePosition(_dominoCintrollerUsed, standDominoController);
                     _dominoCintrollerUsed.IsStand = true;
                 }
-                else
-                {
-                    _dominoCintrollerUsed.RectTransform.anchoredPosition = _startPositionDomino;
-                }
-            }
-            else
-            {
-                _dominoCintrollerUsed.RectTransform.anchoredPosition = _startPositionDomino;
             }
         }
 

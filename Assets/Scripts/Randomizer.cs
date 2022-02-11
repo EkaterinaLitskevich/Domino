@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using DefaultNamespace;
 using UnityEngine;
 using Random = System.Random;
 
-public class Randomizer : MonoBehaviour
+public class Randomizer : IRandom
 {
-    public int GetRandomValue(int minValue, int maxValue)
+    public int RandomValue(int minValue, int maxValue)
     {
         Random random = new Random();
         int value = random.Next(minValue, maxValue + 1);

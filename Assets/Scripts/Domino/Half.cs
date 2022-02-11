@@ -14,10 +14,9 @@ public class Half : MonoBehaviour
     
     private int _value;
 
-    public RectTransform RectTransform
+    public Vector2 SizeDelta
     {
-        get => _rectTransform;
-        set => _rectTransform = value;
+        get => _rectTransform.sizeDelta;
     }
 
     public void Initial()

@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
+using DragAndDrop;
+using UniRx;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -25,33 +27,16 @@ namespace Domino
 
         private int _halfArray;
         public bool IsStand { get; set; }
-        public RectTransform RectTransform 
-        { 
-            get => _rectTransform; 
-            set => _rectTransform = value; 
-        }
-        public HandlerClick HandlerClick 
-        { 
-            get => _handlerClick; 
-            set => _handlerClick = value; 
-        }
-        
-        public Vector2 DefaultSizeDelta 
-        { 
-            get => _defaultSizeDelta; 
-            set => _defaultSizeDelta = value; 
-        }
+        public RectTransform RectTransform => _rectTransform;
+        public HandlerClick HandlerClick => _handlerClick;
+        public Vector2 DefaultSizeDelta => _defaultSizeDelta;
 
         private void OnEnable()
         {
-            _handlerClick.OnBeginDragObj += SetSize;
-            _handlerClick.OnEndDragObj += SetSize;
-        }
-        
-        private void OnDisable()
-        {
-            _handlerClick.OnBeginDragObj -= SetSize;
-            _handlerClick.OnEndDragObj -= SetSize;
+            var disposable = new CompositeDisposable();
+            
+            HandlerClick.Trigger.Where(result => result.Key.Equals(KeysStorage.BeginDrag)).Subscribe(SetSize).AddTo(disposable);
+            HandlerClick.Trigger.Where(result => result.Key.Equals(KeysStorage.EndDrag)).Subscribe(SetSize).AddTo(disposable);
         }
 
         private void Start()
@@ -72,7 +57,7 @@ namespace Domino
         {
             for (int i = 0; i < _halfs.Count; i++)
             {
-                _defaultSizeDelta += new Vector2(0, _halfs[i].RectTransform.sizeDelta.y);
+                _defaultSizeDelta += new Vector2(0, _halfs[i].SizeDelta.y);
             }
         }
 
@@ -116,7 +101,7 @@ namespace Domino
             _collider.size = new Vector2(sizeCollider.x, sizeCollider.y * _amountHalfs);
         }
 
-        private void SetSize(PointerEventData eventData)
+        private void SetSize(CallBack callBack)
         {
             if (!IsStand)
             {
