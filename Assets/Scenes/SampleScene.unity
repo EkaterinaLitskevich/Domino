@@ -813,6 +813,7 @@ MonoBehaviour:
   - {fileID: 284157947}
   - {fileID: 2036567546}
   - {fileID: 1125657438}
+  _offsetBetweenDomino: 0
 --- !u!114 &1129352540
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -825,7 +826,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 971249756b6325c43a7c79ff9bb22cda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _plusSize: 1.5
 --- !u!1 &1151591042
 GameObject:
   m_ObjectHideFlags: 0

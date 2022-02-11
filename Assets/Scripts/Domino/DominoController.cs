@@ -19,7 +19,7 @@ namespace Domino
         private List<Half> _halfs = new List<Half>();
         private List<Half> _halfForCompare = new List<Half>();
         
-        private Vector2 _defaultSize;
+        private Vector3 _defaultSize;
         private Vector2 _defaultSizeDelta;
 
         private int _halfArray;
@@ -43,19 +43,20 @@ namespace Domino
 
         private void OnEnable()
         {
-            //_handlerClick.OnBeginDragObj += SetSize;
-            //_handlerClick.OnEndDragObj += SetSize;
+            _handlerClick.OnBeginDragObj += SetSize;
+            _handlerClick.OnEndDragObj += SetSize;
         }
         
         private void OnDisable()
         {
-            //_handlerClick.OnBeginDragObj -= SetSize;
-            //_handlerClick.OnEndDragObj -= SetSize;
+            _handlerClick.OnBeginDragObj -= SetSize;
+            _handlerClick.OnEndDragObj -= SetSize;
         }
 
         private void Start()
         {
             _halfArray = _amountHalfs / 2;
+            _defaultSize = transform.localScale;
         }
 
         public void Initial(int randomValue)
@@ -70,10 +71,8 @@ namespace Domino
         {
             for (int i = 0; i < _halfs.Count; i++)
             {
-                _defaultSize += new Vector2(0, _halfs[i].RectTransform.sizeDelta.y);
+                _defaultSizeDelta += new Vector2(0, _halfs[i].RectTransform.sizeDelta.y);
             }
-            
-            Debug.Log("_defaultSize = " + _defaultSize);
         }
 
         private void FillArray()
@@ -118,13 +117,13 @@ namespace Domino
 
         private void SetSize(PointerEventData eventData)
         {
-            if (_rectTransform.sizeDelta == _defaultSize)
+            if (transform.localScale == _defaultSize)
             {
-                _rectTransform.sizeDelta = _defaultSize * _plusSize;
+                transform.localScale = _defaultSize * _plusSize;
             }
             else
             {
-                _rectTransform.sizeDelta = _defaultSize;
+                transform.localScale = _defaultSize;
             }
         }
         
