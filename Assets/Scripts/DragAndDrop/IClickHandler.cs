@@ -4,6 +4,6 @@ namespace DragAndDrop
 {
     public interface IClickHandler
     {
-        IObservable<CallBack> Trigger { get; }
+        IObservable<CallBackDrag> Trigger { get; }
     }
 }

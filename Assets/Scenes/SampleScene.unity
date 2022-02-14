@@ -814,6 +814,7 @@ MonoBehaviour:
   - {fileID: 1125657438}
   _offsetBetweenDomino: 10
   _dominoVisibilityRange: 150
+  _maxHalfsInColumn: 7
 --- !u!1 &1151591042
 GameObject:
   m_ObjectHideFlags: 0

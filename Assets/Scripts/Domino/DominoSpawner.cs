@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using DragAndDrop;
 using UniRx;
 using UnityEngine;
 using Zenject;
@@ -21,8 +22,7 @@ namespace Domino
 
         [Inject] private DominoPlacement _dominoPlacement;
         [Inject] private Randomizer _randomizer;
-
-
+        
         private void Start()
         {
             SubscribeDominoPlacement();
@@ -32,19 +32,30 @@ namespace Domino
         {
             var disposable = new CompositeDisposable();
             
-            _dominoPlacement.Trigger.Subscribe(AddToListDominoStand).AddTo(disposable);
+            _dominoPlacement.Trigger.Where(result => result.Key.Equals(KeysStorage.DominoPlacement)).Subscribe(AddToListDominoStand).AddTo(disposable);
+            _dominoPlacement.Trigger.Where(result => result.Key.Equals(KeysStorage.EmptyRowUp)).Subscribe(CreateDominoStand).AddTo(disposable);
         }
         
         public void CreateStartDomino()
         {
+            CreateDominoStand(null);
+            CreateDominoGame();
+        }
+
+        private void CreateDominoStand(CallBackDominoPlacement callBackDominoPlacement)
+        {
             InitialDomino(_dominoControllersStand, _amountDominoStand, true);
+        }
+        
+        private void CreateDominoGame()
+        {
             InitialDomino(_dominoControllersGame, _amountDominoGame, false);
         }
 
-        private void AddToListDominoStand(DominoController dominoController)
+        private void AddToListDominoStand(CallBackDominoPlacement callBackDominoPlacement)
         {
-            _dominoControllersStand.Add(dominoController);
-            _dominoControllersGame.Remove(dominoController);
+            _dominoControllersStand.Add(callBackDominoPlacement.DominoController);
+            _dominoControllersGame.Remove(callBackDominoPlacement.DominoController);
 
             CheckArrayDominoGame();
         }
@@ -53,7 +64,7 @@ namespace Domino
         {
             if (_dominoControllersGame.Count <= 0)
             {
-                InitialDomino(_dominoControllersGame, _amountDominoGame, false);
+                CreateDominoGame();
             }
         }
 

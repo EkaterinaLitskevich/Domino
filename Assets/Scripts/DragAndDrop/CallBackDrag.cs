@@ -2,12 +2,12 @@ using UnityEngine.EventSystems;
 
 namespace DragAndDrop
 {
-    public class CallBack
+    public class CallBackDrag
     {
         public string Key;
         public PointerEventData PointerData;
 
-        public CallBack(string key, PointerEventData data)
+        public CallBackDrag(string key, PointerEventData data)
         {
             Key = key;
             PointerData = data;

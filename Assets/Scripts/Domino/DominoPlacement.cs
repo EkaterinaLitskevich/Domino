@@ -16,15 +16,17 @@ namespace Domino
         [SerializeField] private List<RectTransform> _pointsPositionDown = new List<RectTransform>();
         [SerializeField] private float _offsetBetweenDomino;
         [SerializeField] private float _dominoVisibilityRange;
+        [SerializeField] private int _maxHalfsInColumn;
 
+        private List<List<DominoController>> _columnsDomino = new List<List<DominoController>>();
         private DominoController _dominoCintrollerUsed;
         
         private Vector2 _startPositionDomino;
 
         private int _indexElement;
         
-        private Subject<DominoController> listeners = new Subject<DominoController>();
-        public IObservable<DominoController> Trigger => listeners;
+        private Subject<CallBackDominoPlacement> listeners = new Subject<CallBackDominoPlacement>();
+        public IObservable<CallBackDominoPlacement> Trigger => listeners;
         
         public void PlaceDomino(DominoController domino, bool isStand)
         {
@@ -39,6 +41,8 @@ namespace Domino
                     _indexElement = 0;
                 }
                 point = GetPointPosition(_pointsPositionUp);
+
+                CreateListColumn(domino);
             }
             else
             {
@@ -50,6 +54,13 @@ namespace Domino
             }
             
             domino.RectTransform.anchoredPosition = point.anchoredPosition;
+        }
+
+        private void CreateListColumn(DominoController domino)
+        {
+            List<DominoController> dominoControllers = new List<DominoController>();
+            dominoControllers.Add(domino);
+            _columnsDomino.Add(dominoControllers);
         }
 
         private void SubscribeDrag(DominoController dominoController)
@@ -66,32 +77,32 @@ namespace Domino
                 result.Key.Equals(KeysStorage.EndDrag)).Subscribe(EndDragDomino).AddTo(disposable);
         }
 
-        private void MoveDomino(CallBack callBack)
+        private void MoveDomino(CallBackDrag callBackDrag)
         {
             if (_dominoCintrollerUsed != null)
             {
                 _dominoCintrollerUsed.transform.position =
-                    Vector2.Lerp(_dominoCintrollerUsed.transform.position, callBack.PointerData.position, 1f);
+                    Vector2.Lerp(_dominoCintrollerUsed.transform.position, callBackDrag.PointerData.position, 1f);
             }
         }
 
-        private void EndDragDomino(CallBack callBack)
+        private void EndDragDomino(CallBackDrag callBackDrag)
         {
             if (_dominoCintrollerUsed != null)
             {
-                PlacementDominoNextToDomino(callBack.PointerData);
+                PlacementDominoNextToDomino(callBackDrag.PointerData);
                 _dominoCintrollerUsed = null;
             }
         }
         
-        private void BeginDragDomino(CallBack callBack)
+        private void BeginDragDomino(CallBackDrag callBackDrag)
         {
-            if (callBack.PointerData.pointerCurrentRaycast.gameObject == null)
+            if (callBackDrag.PointerData.pointerCurrentRaycast.gameObject == null)
             {
                 return;
             }
 
-            if (callBack.PointerData.pointerCurrentRaycast.gameObject.transform.parent.TryGetComponent(out DominoController dominoController))
+            if (callBackDrag.PointerData.pointerCurrentRaycast.gameObject.transform.parent.TryGetComponent(out DominoController dominoController))
             {
                 if (!dominoController.IsStand)
                 {
@@ -114,30 +125,80 @@ namespace Domino
                 {
                     if (standDominoController.IsStand && standDominoController.IsLast)
                     {
-                        CalculatePosition(_dominoCintrollerUsed, standDominoController);
+                        CalculatePosition(standDominoController);
+                        AddToList(standDominoController);
+                        
                         _dominoCintrollerUsed.IsStand = true;
 
                         standDominoController.IsLast = false;
                         _dominoCintrollerUsed.IsLast = true;
 
-                        listeners.OnNext(_dominoCintrollerUsed);
+                        listeners.OnNext(new CallBackDominoPlacement(KeysStorage.DominoPlacement, _dominoCintrollerUsed));
 
                         return;
                     }
                 }
             }
         }
+        
+        private void AddToList(DominoController standDominoController)
+        {
+            for (int i = 0; i < _columnsDomino.Count; i++)
+            {
+                for (int j = 0; j < _columnsDomino[i].Count; j++)
+                {
+                    if (standDominoController == _columnsDomino[i][j])
+                    {
+                        _columnsDomino[i].Add(_dominoCintrollerUsed);
+                        CheckAmountHalfs(_columnsDomino[i]);
+                        return;
+                    }
+                }
+            }
+        }
 
-        private void CalculatePosition(DominoController dominoController, DominoController standDominoController)
+        private void CheckAmountHalfs(List<DominoController> column)
+        {
+            int halfs = 0;
+            
+            for (int i = 0; i < column.Count; i++)
+            {
+                halfs += column[i].Halfs.Count;
+
+                if (halfs >= _maxHalfsInColumn)
+                {
+                    DestroyArrays();
+                    
+                    return;
+                }
+            }
+        }
+
+        private void DestroyArrays()
+        {
+            for (int i = _columnsDomino.Count - 1; i >= 0; i--)
+            {
+                for (int j = _columnsDomino[i].Count - 1; j >= 0 ; j--)
+                {
+                    Destroy(_columnsDomino[i][j].gameObject);
+                    _columnsDomino[i].RemoveAt(j);
+                }
+                _columnsDomino.RemoveAt(i);
+            }
+            
+            listeners.OnNext(new CallBackDominoPlacement(KeysStorage.EmptyRowUp, _dominoCintrollerUsed));
+        }
+
+        private void CalculatePosition(DominoController standDominoController)
         {
             float halfStandDominoSize = standDominoController.DefaultSizeDelta.y / 2;
-            float halfDominoControllerSize = dominoController.DefaultSizeDelta.y / 2;
+            float halfDominoControllerSize = _dominoCintrollerUsed.DefaultSizeDelta.y / 2;
 
             Vector2 anchoredPosition = standDominoController.RectTransform.anchoredPosition;
             float newPositionY = anchoredPosition.y - halfStandDominoSize - _offsetBetweenDomino - halfDominoControllerSize;
             float newPositionX = anchoredPosition.x;
 
-            dominoController.RectTransform.anchoredPosition = new Vector2(newPositionX ,newPositionY);
+            _dominoCintrollerUsed.RectTransform.anchoredPosition = new Vector2(newPositionX ,newPositionY);
         }
 
         private RectTransform GetPointPosition(List<RectTransform> points)

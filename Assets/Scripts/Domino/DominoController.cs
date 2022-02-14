@@ -31,6 +31,7 @@ namespace Domino
         public RectTransform RectTransform => _rectTransform;
         public HandlerClick HandlerClick => _handlerClick;
         public Vector2 DefaultSizeDelta => _defaultSizeDelta;
+        public List<Half> Halfs => _halfs;
 
         private void OnEnable()
         {
@@ -102,7 +103,7 @@ namespace Domino
             _collider.size = new Vector2(sizeCollider.x, sizeCollider.y * _amountHalfs);
         }
 
-        private void SetSize(CallBack callBack)
+        private void SetSize(CallBackDrag callBackDrag)
         {
             if (!IsStand)
             {
