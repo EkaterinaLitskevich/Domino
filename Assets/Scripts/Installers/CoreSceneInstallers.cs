@@ -1,7 +1,10 @@
+using System.Threading.Tasks;
+using Controllers;
 using Cysharp.Threading.Tasks;
 using DefaultNamespace;
 using Domino;
 using UnityEngine;
+using Update;
 using Zenject;
 
 namespace Installers
@@ -10,21 +13,35 @@ namespace Installers
     {
         [SerializeField] private string _nameDominoSpawnerPath;
         [SerializeField] private string _nameLevelControllerPath;
+        [SerializeField] private string _nameUpdaterPath;
         [SerializeField] private DominoPlacement _dominoPlacement;
         [SerializeField] private Canvas _canvas;
-        public override void InstallBindings()
+        public override async void InstallBindings()
         {
             BindRandomizer();
             BindDominoPlacement();
-            BindDominoSpawner();
+            await BindUpdater();
+            await BindDominoSpawner();
+
             BindLevelController();
         }
 
+        private async Task BindUpdater()
+        {
+            var loadRequest = Resources.LoadAsync<Updater>(_nameUpdaterPath);
+
+            await UniTask.WaitUntil(() => loadRequest.isDone);
+            
+            Updater updater = Container
+                .InstantiatePrefabForComponent<Updater>(loadRequest.asset);
+
+            BindObject(updater);
+        }
+        
         private void BindRandomizer()
         {
-            //Randomizer randomizer = new Randomizer();
-            
-            //BindInterfaces(randomizer);
+            Container
+                .BindInterfacesAndSelfTo<Randomizer>().AsSingle();
         }
 
         private void BindDominoPlacement()
@@ -32,7 +49,7 @@ namespace Installers
             BindObject(_dominoPlacement);
         }
         
-        private async void BindDominoSpawner()
+        private async Task BindDominoSpawner()
         {
             var loadRequest = Resources.LoadAsync<DominoSpawner>(_nameDominoSpawnerPath);
 
@@ -62,13 +79,6 @@ namespace Installers
                 .Bind<T>()
                 .FromInstance(obj)
                 .AsSingle();
-        }
-        
-        private void BindInterfaces<T>(T obj)
-        {
-            Container
-                .BindInterfacesTo<T>()
-                .Lazy();
         }
     }
 }
