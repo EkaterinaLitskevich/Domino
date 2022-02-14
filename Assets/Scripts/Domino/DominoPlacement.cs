@@ -15,6 +15,7 @@ namespace Domino
         [SerializeField] private List<RectTransform> _pointsPositionUp = new List<RectTransform>();
         [SerializeField] private List<RectTransform> _pointsPositionDown = new List<RectTransform>();
         [SerializeField] private float _offsetBetweenDomino;
+        [SerializeField] private float _dominoVisibilityRange;
 
         private DominoController _dominoCintrollerUsed;
 
@@ -89,22 +90,25 @@ namespace Domino
 
         private void PlacementDominoNextToDomino(PointerEventData eventData)
         {
-            RaycastHit2D hit =
-                Physics2D.CircleCast(_dominoCintrollerUsed.transform.position, 200, Vector2.zero);
+            RaycastHit2D[] colliders =
+                Physics2D.CircleCastAll(_dominoCintrollerUsed.transform.position, _dominoVisibilityRange, Vector2.zero);
 
             _dominoCintrollerUsed.RectTransform.anchoredPosition = _startPositionDomino;
 
-            if (hit.collider == null)
+            for (int i = 0; i < colliders.Length; i++)
             {
-                return;
-            }
-
-            if (hit.collider.TryGetComponent(out DominoController standDominoController))
-            {
-                if (standDominoController.IsStand)
+                if (colliders[i].collider.TryGetComponent(out DominoController standDominoController))
                 {
-                    CalculatePosition(_dominoCintrollerUsed, standDominoController);
-                    _dominoCintrollerUsed.IsStand = true;
+                    if (standDominoController.IsStand && standDominoController.IsLast)
+                    {
+                        CalculatePosition(_dominoCintrollerUsed, standDominoController);
+                        _dominoCintrollerUsed.IsStand = true;
+
+                        standDominoController.IsLast = false;
+                        _dominoCintrollerUsed.IsLast = true;
+                        
+                        return;
+                    }
                 }
             }
         }

@@ -32,7 +32,7 @@ namespace Domino
             for (int i = 0; i < amountDomino; i++)
             {
                 DominoController dominoController = CreateDomino(isStand);
-
+                
                 _dominoPlacement.PlaceDomino(dominoController, isStand);
 
                 dominoControllers.Add(dominoController);
@@ -47,6 +47,11 @@ namespace Domino
             DominoController dominoController =
                 Instantiate(_dominoPrefab, transform);
             dominoController.IsStand = isStand;
+
+            if (isStand)
+            {
+                dominoController.IsLast = true;
+            }
 
             return dominoController;
         }

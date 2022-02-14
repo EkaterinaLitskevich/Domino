@@ -27,6 +27,7 @@ namespace Domino
 
         private int _halfArray;
         public bool IsStand { get; set; }
+        public bool IsLast { get; set; }
         public RectTransform RectTransform => _rectTransform;
         public HandlerClick HandlerClick => _handlerClick;
         public Vector2 DefaultSizeDelta => _defaultSizeDelta;
