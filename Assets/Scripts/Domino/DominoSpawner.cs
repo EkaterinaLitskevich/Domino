@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UniRx;
 using UnityEngine;
 using Zenject;
 using Random = UnityEngine.Random;
@@ -19,12 +20,41 @@ namespace Domino
         private List<DominoController> _dominoControllersGame = new List<DominoController>();
 
         [Inject] private DominoPlacement _dominoPlacement;
-        //[Inject] private Randomizer _randomizer;
+        [Inject] private Randomizer _randomizer;
+
+
+        private void Start()
+        {
+            SubscribeDominoPlacement();
+        }
+
+        private void SubscribeDominoPlacement()
+        {
+            var disposable = new CompositeDisposable();
+            
+            _dominoPlacement.Trigger.Subscribe(AddToListDominoStand).AddTo(disposable);
+        }
         
         public void CreateStartDomino()
         {
             InitialDomino(_dominoControllersStand, _amountDominoStand, true);
             InitialDomino(_dominoControllersGame, _amountDominoGame, false);
+        }
+
+        private void AddToListDominoStand(DominoController dominoController)
+        {
+            _dominoControllersStand.Add(dominoController);
+            _dominoControllersGame.Remove(dominoController);
+
+            CheckArrayDominoGame();
+        }
+        
+        private void CheckArrayDominoGame()
+        {
+            if (_dominoControllersGame.Count <= 0)
+            {
+                InitialDomino(_dominoControllersGame, _amountDominoGame, false);
+            }
         }
 
         private void InitialDomino(List<DominoController> dominoControllers, int amountDomino, bool isStand)
@@ -37,8 +67,8 @@ namespace Domino
 
                 dominoControllers.Add(dominoController);
 
-                //int randomValue = _randomizer.GetRandomValue(MinValue, MaxValue);
-                dominoController.Initial(0);
+                int randomValue = _randomizer.GetRandomValue(MinValue, MaxValue);
+                dominoController.Initial(randomValue);
             }
         }
         

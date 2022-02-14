@@ -1,24 +1,32 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using Domino;
 using UnityEngine;
+using Update;
 using Zenject;
 
-public class LevelController : MonoBehaviour
+namespace Controllers
 {
-    [Inject] private DominoSpawner _dominoSpawner;
-
-    private void Initialize()
+    public class LevelController : MonoBehaviour, IUpdate
     {
-        _dominoSpawner.CreateStartDomino();
-    }
+        [Inject] private DominoSpawner _dominoSpawner;
+        [Inject] private Updater _updater;
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.A))
+        private void Start()
         {
-            Initialize();
+            _updater.AddToList(this);
+        }
+
+        private void Initialize()
+        {
+            _dominoSpawner.CreateStartDomino();
+        }
+
+        public void UpdateManual()
+        {
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                Initialize();
+            }
         }
     }
 }

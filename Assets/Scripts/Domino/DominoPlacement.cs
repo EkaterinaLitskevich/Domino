@@ -18,9 +18,14 @@ namespace Domino
         [SerializeField] private float _dominoVisibilityRange;
 
         private DominoController _dominoCintrollerUsed;
-
+        
         private Vector2 _startPositionDomino;
 
+        private int _indexElement;
+        
+        private Subject<DominoController> listeners = new Subject<DominoController>();
+        public IObservable<DominoController> Trigger => listeners;
+        
         public void PlaceDomino(DominoController domino, bool isStand)
         {
             SubscribeDrag(domino);
@@ -29,10 +34,18 @@ namespace Domino
 
             if (isStand)
             {
+                if (_indexElement >= _pointsPositionUp.Count)
+                {
+                    _indexElement = 0;
+                }
                 point = GetPointPosition(_pointsPositionUp);
             }
             else
             {
+                if (_indexElement >= _pointsPositionDown.Count)
+                {
+                    _indexElement = 0;
+                }
                 point = GetPointPosition(_pointsPositionDown);
             }
             
@@ -83,7 +96,7 @@ namespace Domino
                 if (!dominoController.IsStand)
                 {
                     _dominoCintrollerUsed = dominoController;
-                    _startPositionDomino = dominoController.RectTransform.anchoredPosition;
+                    _startPositionDomino =  dominoController.RectTransform.anchoredPosition;
                 }
             }
         }
@@ -106,7 +119,9 @@ namespace Domino
 
                         standDominoController.IsLast = false;
                         _dominoCintrollerUsed.IsLast = true;
-                        
+
+                        listeners.OnNext(_dominoCintrollerUsed);
+
                         return;
                     }
                 }
@@ -129,15 +144,9 @@ namespace Domino
         {
             RectTransform point;
 
-            if (points[0] != null)
-            {
-                point = points[0];
-                points.RemoveAt(0);
-            }
-            else
-            {
-                point = null; //getTransform near domino
-            }
+            point = points[_indexElement];
+            _indexElement++;
+
             return point;
         }
     }

@@ -702,6 +702,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _nameDominoSpawnerPath: DominoCreater/DominoSpawner
   _nameLevelControllerPath: Controllers/LevelController
+  _nameUpdaterPath: Updater
   _dominoPlacement: {fileID: 1129352539}
   _canvas: {fileID: 1967746838}
 --- !u!4 &898240184
