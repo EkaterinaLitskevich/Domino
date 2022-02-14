@@ -6,7 +6,7 @@ using Random = System.Random;
 
 public class Randomizer : IRandom
 {
-    public int RandomValue(int minValue, int maxValue)
+    public int GetRandomValue(int minValue, int maxValue)
     {
         Random random = new Random();
         int value = random.Next(minValue, maxValue + 1);

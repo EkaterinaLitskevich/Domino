@@ -2,6 +2,6 @@ namespace DefaultNamespace
 {
     public interface IRandom
     {
-        public int RandomValue(int minValue, int maxValue);
+        public int GetRandomValue(int minValue, int maxValue);
     }
 }
