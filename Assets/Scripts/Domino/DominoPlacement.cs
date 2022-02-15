@@ -21,11 +21,10 @@ namespace Domino
         private List<List<DominoController>> _columnsDomino = new List<List<DominoController>>();
         private DominoController _dominoCintrollerUsed;
         
-        private Vector2 _startPositionDomino;
-
-        private int _indexElement;
-        
         private Subject<CallBackDominoPlacement> listeners = new Subject<CallBackDominoPlacement>();
+        private Vector2 _startPositionDomino;
+        private int _indexElement;
+
         public IObservable<CallBackDominoPlacement> Trigger => listeners;
         
         public void PlaceDomino(DominoController domino, bool isStand)

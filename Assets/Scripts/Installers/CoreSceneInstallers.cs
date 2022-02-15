@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Controllers;
 using Cysharp.Threading.Tasks;
 using Domino;
+using Random;
 using UnityEngine;
 using Zenject;
 
@@ -13,6 +14,7 @@ namespace Installers
         [SerializeField] private string _nameLevelControllerPath;
         [SerializeField] private DominoPlacement _dominoPlacement;
         [SerializeField] private Canvas _canvas;
+        
         public override async void InstallBindings()
         {
             BindRandomizer();
@@ -25,7 +27,7 @@ namespace Installers
         private void BindRandomizer()
         {
             Container
-                .BindInterfacesAndSelfTo<Randomizer>().AsSingle();
+                .BindInterfacesTo<Randomizer>().AsSingle();
         }
 
         private void BindDominoPlacement()

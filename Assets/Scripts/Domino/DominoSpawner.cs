@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using DragAndDrop;
+using Random;
 using UniRx;
 using UnityEngine;
 using Zenject;
@@ -23,7 +24,7 @@ namespace Domino
         private CompositeDisposable _disposable = new CompositeDisposable();
 
         [Inject] private DominoPlacement _dominoPlacement;
-        [Inject] private Randomizer _randomizer;
+        [Inject] private IRandom _randomizer;
 
         private void OnEnable()
         {

@@ -25,8 +25,8 @@ namespace Domino
         private CompositeDisposable _disposable = new CompositeDisposable();
         private Vector3 _defaultSize;
         private Vector2 _defaultSizeDelta;
-
         private int _halfArray;
+        
         public bool IsStand { get; set; }
         public bool IsLast { get; set; }
         public RectTransform RectTransform => _rectTransform;

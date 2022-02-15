@@ -8,6 +8,11 @@ using UnityEngine.EventSystems;
 
 namespace DragAndDrop
 {
+    public interface IClickHandler
+    {
+        IObservable<CallBackDrag> Trigger { get; }
+    }
+    
     public class HandlerClick : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IClickHandler
     {
         private Subject<CallBackDrag> listeners = new Subject<CallBackDrag>();
