@@ -22,6 +22,7 @@ namespace Domino
         private List<Half> _halfs = new List<Half>();
         private List<Half> _halfForCompare = new List<Half>();
         
+        private CompositeDisposable _disposable = new CompositeDisposable();
         private Vector3 _defaultSize;
         private Vector2 _defaultSizeDelta;
 
@@ -35,10 +36,13 @@ namespace Domino
 
         private void OnEnable()
         {
-            var disposable = new CompositeDisposable();
-            
-            HandlerClick.Trigger.Where(result => result.Key.Equals(KeysStorage.BeginDrag)).Subscribe(SetSize).AddTo(disposable);
-            HandlerClick.Trigger.Where(result => result.Key.Equals(KeysStorage.EndDrag)).Subscribe(SetSize).AddTo(disposable);
+            HandlerClick.Trigger.Where(result => result.Key.Equals(KeysStorage.BeginDrag)).Subscribe(SetSize).AddTo(_disposable);
+            HandlerClick.Trigger.Where(result => result.Key.Equals(KeysStorage.EndDrag)).Subscribe(SetSize).AddTo(_disposable);
+        }
+
+        private void OnDisable()
+        {
+            _disposable.Dispose();
         }
 
         private void Start()

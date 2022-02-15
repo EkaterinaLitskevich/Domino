@@ -20,22 +20,22 @@ namespace Domino
         private List<DominoController> _dominoControllersStand = new List<DominoController>();
         private List<DominoController> _dominoControllersGame = new List<DominoController>();
 
+        private CompositeDisposable _disposable = new CompositeDisposable();
+
         [Inject] private DominoPlacement _dominoPlacement;
         [Inject] private Randomizer _randomizer;
-        
-        private void Start()
+
+        private void OnEnable()
         {
-            SubscribeDominoPlacement();
+            _dominoPlacement.Trigger.Where(result => result.Key.Equals(KeysStorage.DominoPlacement)).Subscribe(AddToListDominoStand).AddTo(_disposable);
+            _dominoPlacement.Trigger.Where(result => result.Key.Equals(KeysStorage.EmptyRowUp)).Subscribe(CreateDominoStand).AddTo(_disposable);
         }
 
-        private void SubscribeDominoPlacement()
+        private void OnDisable()
         {
-            var disposable = new CompositeDisposable();
-            
-            _dominoPlacement.Trigger.Where(result => result.Key.Equals(KeysStorage.DominoPlacement)).Subscribe(AddToListDominoStand).AddTo(disposable);
-            _dominoPlacement.Trigger.Where(result => result.Key.Equals(KeysStorage.EmptyRowUp)).Subscribe(CreateDominoStand).AddTo(disposable);
+            _disposable.Dispose();
         }
-        
+
         public void CreateStartDomino()
         {
             CreateDominoStand(null);

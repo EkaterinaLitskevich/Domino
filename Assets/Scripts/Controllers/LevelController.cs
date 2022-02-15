@@ -8,14 +8,21 @@ namespace Controllers
 {
     public class LevelController : MonoBehaviour
     {
+        private CompositeDisposable _disposable = new CompositeDisposable();
+        
         [Inject] private DominoSpawner _dominoSpawner;
 
-        private void Start()
+        private void OnEnable()
         {
             Observable.EveryUpdate().Subscribe(_ =>
             {
-                UpdateManual(); ;
-            });
+                UpdateManual();
+            }).AddTo(_disposable);
+        }
+        
+        private void OnDisable()
+        {
+            _disposable.Dispose();
         }
 
         private void Initialize()
