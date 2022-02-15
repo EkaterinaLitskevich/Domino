@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using DragAndDrop;
@@ -20,19 +21,19 @@ namespace Domino
         [SerializeField] private float _plusSize;
     
         private List<Half> _halfs = new List<Half>();
-        private List<Half> _halfForCompare = new List<Half>();
-        
+
         private CompositeDisposable _disposable = new CompositeDisposable();
+        private Half _halfForCompare;
         private Vector3 _defaultSize;
         private Vector2 _defaultSizeDelta;
-        private int _halfArray;
         
-        public bool IsStand { get; set; }
-        public bool IsLast { get; set; }
         public RectTransform RectTransform => _rectTransform;
         public HandlerClick HandlerClick => _handlerClick;
+        public Half HalfForCompare => _halfForCompare;
         public Vector2 DefaultSizeDelta => _defaultSizeDelta;
-        public List<Half> Halfs => _halfs;
+        public int HalfsCount => _amountHalfs;
+        public bool IsStand { get; set; }
+        public bool IsLast { get; set; }
 
         private void OnEnable()
         {
@@ -47,19 +48,13 @@ namespace Domino
 
         private void Start()
         {
-            Observable.EveryUpdate().Subscribe(_ =>
-            {
-                UpdateManual(); ;
-            });
-            
-            _halfArray = _amountHalfs / 2;
             _defaultSize = transform.localScale;
         }
 
         public void Initial(int randomValue)
         {
             FillArray();
-            FillGrid();
+            SetHalfForCompare();
             SetSizeCollider();
             CalculateDefaultSizeDelta();
         }
@@ -75,35 +70,29 @@ namespace Domino
         private void FillArray()
         {
             Half half;
-        
+            int index = 0;
+
             for (int i = 0; i < _amountHalfs; i++)
             {
-                half = Instantiate(_halfPrefab, transform.position, transform.rotation, null);
+                half = Instantiate(_halfPrefab, transform);
+                half.gameObject.name = "Half " + index;
                 _halfs.Add(half);
+                index++;
             }
         }
 
-        private void FillGrid()
+        private void SetHalfForCompare()
         {
-            for (int i = 0; i < _halfArray; i++)
+            if (IsStand)
             {
-                _halfs[i].transform.SetParent(transform);
-                SetHalfsForCompare(true, i);
+                _halfForCompare = _halfs[_halfs.Count - 1];
             }
-
-            for (int i = _halfs.Count - 1; i >= _halfArray; i--)
+            else
             {
-                _halfs[i].transform.SetParent(transform);
-                SetHalfsForCompare(false, i);
+                _halfForCompare = _halfs[0];
             }
-        }
-
-        private void SetHalfsForCompare(bool isStand, int i)
-        {
-            if (IsStand == isStand)
-            {
-                _halfForCompare.Add(_halfs[i]);
-            }
+            
+            //Debug.Log("_halfForCompare = " + _halfForCompare.gameObject.name);
         }
 
         private void SetSizeCollider()
@@ -127,78 +116,26 @@ namespace Domino
             }
         }
         
-        private void Rotate()
+        public void Rotate()
         {
             transform.Rotate(0,0, ValueRotateZ);
             SetElementForArray();
+            SetHalfForCompare();
         }
 
         private void SetElementForArray()
         {
-            foreach (var t in _halfs)
+            /*foreach (var obj in _halfs)
             {
-                Debug.Log("element: " + t);
-            }
+                Debug.Log("obj = " + obj);
+            }*/
             
-            Half half;
+            _halfs.Reverse();
 
-            if (_halfArray > 2)
+            /*foreach (var obj in _halfs)
             {
-                for (int i = _halfs.Count - 1; i >= _halfArray; i--) //array in reverse order
-                {
-                    half = _halfs[i];
-
-                    _halfs[i] = _halfs[_halfs.Count - i - 1];
-                    _halfs[_halfs.Count - i - 1] = half;
-                }
-
-                foreach (var t in _halfs)
-                {
-                    Debug.Log("element: " + t);
-                }
-                int index = 0;
-                for (int i = _halfs.Count - 1; i >= _halfArray; i--) //bottom numbers in reverse order
-                {
-                    half = _halfs[i];
-                    _halfs[i] = _halfs[_halfArray + index];
-                    _halfs[_halfArray + index] = half;
-                    index++;
-                }
-
-                /*for (int i = 0; i < _halfArray / 2; i++)
-                {
-                    Debug.Log("_halfArray / 2 = " + _halfArray / 2);
-                    Debug.Log("i = " + i);
-                    
-                    half = _halfs[i];
-
-                    _halfs[i] = _halfs[_halfArray - i];
-                    _halfs[_halfArray - i] = half;
-                }*/
-            }
-            else
-            {
-                for (int i = 0; i < _halfArray; i++)
-                {
-                    half = _halfs[i];
-
-                    _halfs[i] = _halfs[_halfArray - i];
-                    _halfs[_halfArray - i] = half;
-                }
-            }
-
-            foreach (var t in _halfs)
-            {
-                Debug.Log("element: " + t);
-            }
-        }
-
-        public void UpdateManual()
-        {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                Rotate();
-            }
+                Debug.Log("obj = " + obj);
+            }*/
         }
     }
 }

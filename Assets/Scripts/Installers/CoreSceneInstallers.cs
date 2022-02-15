@@ -12,6 +12,7 @@ namespace Installers
     {
         [SerializeField] private string _nameDominoSpawnerPath;
         [SerializeField] private string _nameLevelControllerPath;
+        [SerializeField] private string _nameGameScreenPath;
         [SerializeField] private DominoPlacement _dominoPlacement;
         [SerializeField] private Canvas _canvas;
         
@@ -19,9 +20,23 @@ namespace Installers
         {
             BindRandomizer();
             BindDominoPlacement();
-            await BindDominoSpawner();
 
+            await BindDominoSpawner();
+            Debug.Log("1");
+            BindGameScreen();
             BindLevelController();
+        }
+        
+        private async void BindGameScreen()
+        {
+            var loadRequest = Resources.LoadAsync<GameScreen>(_nameGameScreenPath);
+
+            await UniTask.WaitUntil(() => loadRequest.isDone);
+            
+            GameScreen gameScreen = Container
+                .InstantiatePrefabForComponent<GameScreen>(loadRequest.asset, _canvas.transform);
+            
+            BindObjectAsSingle(gameScreen);
         }
         
         private void BindRandomizer()
@@ -32,7 +47,7 @@ namespace Installers
 
         private void BindDominoPlacement()
         {
-            BindObject(_dominoPlacement);
+            BindObjectAsSingle(_dominoPlacement);
         }
         
         private async Task BindDominoSpawner()
@@ -44,7 +59,12 @@ namespace Installers
             DominoSpawner dominoSpawner = Container
                 .InstantiatePrefabForComponent<DominoSpawner>(loadRequest.asset, _canvas.transform);
 
-            BindObject(dominoSpawner);
+            /*Container
+                .Bind<DominoSpawner>()
+                .FromInstance(dominoSpawner)
+                .AsCached();*/
+            
+                BindObjectAsSingle(dominoSpawner);
         }
         
         private async void BindLevelController()
@@ -56,10 +76,10 @@ namespace Installers
             LevelController levelController = Container
                 .InstantiatePrefabForComponent<LevelController>(loadRequest.asset);
             
-            BindObject(levelController);
+            BindObjectAsSingle(levelController);
         }
 
-        private void BindObject<T>(T obj)
+        private void BindObjectAsSingle<T>(T obj)
         {
             Container
                 .Bind<T>()

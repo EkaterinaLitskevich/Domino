@@ -64,16 +64,14 @@ namespace Domino
 
         private void SubscribeDrag(DominoController dominoController)
         {
-            var disposable = new CompositeDisposable();
-            
-            dominoController.HandlerClick.Trigger.Where(result => 
-                result.Key.Equals(KeysStorage.BeginDrag)).Subscribe(BeginDragDomino).AddTo(disposable); 
-            
-            dominoController.HandlerClick.Trigger.Where(result 
-                => result.Key.Equals(KeysStorage.Drag)).Subscribe(MoveDomino).AddTo(disposable); 
-            
             dominoController.HandlerClick.Trigger.Where(result =>
-                result.Key.Equals(KeysStorage.EndDrag)).Subscribe(EndDragDomino).AddTo(disposable);
+                result.Key.Equals(KeysStorage.BeginDrag)).Subscribe(BeginDragDomino);
+
+            dominoController.HandlerClick.Trigger.Where(result
+                => result.Key.Equals(KeysStorage.Drag)).Subscribe(MoveDomino);
+
+            dominoController.HandlerClick.Trigger.Where(result =>
+                result.Key.Equals(KeysStorage.EndDrag)).Subscribe(EndDragDomino);
         }
 
         private void MoveDomino(CallBackDrag callBackDrag)
@@ -162,7 +160,7 @@ namespace Domino
             
             for (int i = 0; i < column.Count; i++)
             {
-                halfs += column[i].Halfs.Count;
+                halfs += column[i].HalfsCount;
 
                 if (halfs >= _maxHalfsInColumn)
                 {

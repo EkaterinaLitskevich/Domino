@@ -43,6 +43,14 @@ namespace Domino
             CreateDominoGame();
         }
 
+        public void RotateDominoGame()
+        {
+            for (int i = 0; i < _dominoControllersGame.Count; i++)
+            {
+                _dominoControllersGame[i].Rotate();
+            }
+        }
+
         private void CreateDominoStand(CallBackDominoPlacement callBackDominoPlacement)
         {
             InitialDomino(_dominoControllersStand, _amountDominoStand, true);
