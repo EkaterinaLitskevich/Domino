@@ -43,6 +43,11 @@ namespace Domino
 
         private void Start()
         {
+            Observable.EveryUpdate().Subscribe(_ =>
+            {
+                UpdateManual(); ;
+            });
+            
             _halfArray = _amountHalfs / 2;
             _defaultSize = transform.localScale;
         }
@@ -184,7 +189,7 @@ namespace Domino
             }
         }
 
-        public void Update()
+        public void UpdateManual()
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {

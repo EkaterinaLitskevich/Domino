@@ -1,19 +1,21 @@
 using System;
 using Domino;
+using UniRx;
 using UnityEngine;
-using Update;
 using Zenject;
 
 namespace Controllers
 {
-    public class LevelController : MonoBehaviour, IUpdate
+    public class LevelController : MonoBehaviour
     {
         [Inject] private DominoSpawner _dominoSpawner;
-        [Inject] private Updater _updater;
 
         private void Start()
         {
-            _updater.AddToList(this);
+            Observable.EveryUpdate().Subscribe(_ =>
+            {
+                UpdateManual(); ;
+            });
         }
 
         private void Initialize()
