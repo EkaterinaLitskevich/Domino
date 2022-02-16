@@ -1,29 +1,36 @@
-using System;
 using Domino;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
-public class GameScreen : MonoBehaviour
+namespace UI
 {
-    [SerializeField] private Button _rotateButton;
+    public class GameScreen : MonoBehaviour
+    {
+        [SerializeField] private Button _rotateButton;
+        [SerializeField] private Button _shuffleButton;
 
-    private CompositeDisposable _disposable = new CompositeDisposable();
+        private CompositeDisposable _disposable = new CompositeDisposable();
     
-    [Inject] private DominoSpawner _dominoSpawner;
+        [Inject] private DominoSpawner _dominoSpawner;
 
-    private void Start()
-    {
-        Debug.Log("2");
-        _rotateButton.onClick.AsObservable().Subscribe(_ =>
+        private void Start()
         {
-            _dominoSpawner.RotateDominoGame();
-        }).AddTo(_disposable);
-    }
+            _rotateButton.onClick.AsObservable().Subscribe(_ =>
+            {
+                _dominoSpawner.RotateDominoGame();
+            }).AddTo(_disposable);
+            
+            _shuffleButton.onClick.AsObservable().Subscribe(_ =>
+            {
+                _dominoSpawner.ShuffleDomino();
+            }).AddTo(_disposable);
+        }
 
-    private void OnDisable()
-    {
-        _disposable.Dispose();
+        private void OnDisable()
+        {
+            _disposable.Dispose();
+        }
     }
 }

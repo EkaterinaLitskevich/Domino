@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using System;
 
 namespace Random
 {
@@ -11,10 +11,11 @@ namespace Random
 
     public class Randomizer : IRandom
     {
+        private System.Random _random = new System.Random();
         public int GetRandomValue(int minValue, int maxValue)
         {
-            System.Random random = new System.Random();
-            int value = random.Next(minValue, maxValue + 1);
+            //System.Random random = new System.Random();
+            int value = _random.Next(minValue, maxValue + 1);
             return value;
         }
     }

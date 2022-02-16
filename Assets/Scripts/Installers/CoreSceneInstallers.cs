@@ -3,6 +3,7 @@ using Controllers;
 using Cysharp.Threading.Tasks;
 using Domino;
 using Random;
+using UI;
 using UnityEngine;
 using Zenject;
 
@@ -20,9 +21,7 @@ namespace Installers
         {
             BindRandomizer();
             BindDominoPlacement();
-
             await BindDominoSpawner();
-            Debug.Log("1");
             BindGameScreen();
             BindLevelController();
         }
@@ -59,12 +58,7 @@ namespace Installers
             DominoSpawner dominoSpawner = Container
                 .InstantiatePrefabForComponent<DominoSpawner>(loadRequest.asset, _canvas.transform);
 
-            /*Container
-                .Bind<DominoSpawner>()
-                .FromInstance(dominoSpawner)
-                .AsCached();*/
-            
-                BindObjectAsSingle(dominoSpawner);
+            BindObjectAsSingle(dominoSpawner);
         }
         
         private async void BindLevelController()

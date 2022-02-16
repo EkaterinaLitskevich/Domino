@@ -19,16 +19,9 @@ public class Half : MonoBehaviour
         get => _rectTransform.sizeDelta;
     }
 
-    public void Initial(int value)
-    {   
-        SetValue(value);
-        SetImage();
-    }
-
-    private void SetValue(int value)
+    public void SetValue(int value)
     {
         _value = value;
-        Debug.Log("value = " + _value);
     }
 
     private void SetImage()

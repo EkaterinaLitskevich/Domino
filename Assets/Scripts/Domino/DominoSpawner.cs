@@ -51,6 +51,15 @@ namespace Domino
             }
         }
 
+        public void ShuffleDomino()
+        {
+            for (int i = 0; i < _dominoControllersGame.Count; i++)
+            {
+                List<int> randomValues = CreateRandomValuesArray(_dominoControllersGame[i].HalfsCount);
+                _dominoControllersGame[i].SetValueHalfs(randomValues);
+            }
+        }
+
         private void CreateDominoStand(CallBackDominoPlacement callBackDominoPlacement)
         {
             InitialDomino(_dominoControllersStand, _amountDominoStand, true);
@@ -87,9 +96,22 @@ namespace Domino
 
                 dominoControllers.Add(dominoController);
 
-                int randomValue = _randomizer.GetRandomValue(MinValue, MaxValue);
-                dominoController.Initial(randomValue);
+                List<int> randomValues = CreateRandomValuesArray(dominoController.HalfsCount);
+                dominoController.Initial(randomValues);
             }
+        }
+        
+        private List<int> CreateRandomValuesArray(int amountHalfs)
+        {
+            List<int> randomValues = new List<int>();
+
+            for (int i = 0; i < amountHalfs; i++)
+            {
+                int randomValue = _randomizer.GetRandomValue(MinValue, MaxValue);
+                randomValues.Add(randomValue);
+            }
+            
+            return randomValues;
         }
         
         private DominoController CreateDomino(bool isStand)

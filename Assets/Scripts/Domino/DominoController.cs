@@ -51,9 +51,9 @@ namespace Domino
             _defaultSize = transform.localScale;
         }
 
-        public void Initial(int randomValue)
+        public void Initial(List<int> randomValues)
         {
-            FillArray();
+            FillArray(randomValues);
             SetHalfForCompare();
             SetSizeCollider();
             CalculateDefaultSizeDelta();
@@ -67,7 +67,7 @@ namespace Domino
             }
         }
 
-        private void FillArray()
+        private void FillArray(List<int> randomValues)
         {
             Half half;
             int index = 0;
@@ -75,9 +75,28 @@ namespace Domino
             for (int i = 0; i < _amountHalfs; i++)
             {
                 half = Instantiate(_halfPrefab, transform);
+
+                SetValueHalf(half, randomValues);
+                
                 half.gameObject.name = "Half " + index;
+                
                 _halfs.Add(half);
+                
                 index++;
+            }
+        }
+
+        private void SetValueHalf(Half half, List<int> randomValues)
+        {
+            half.SetValue(randomValues[0]);
+            randomValues.RemoveAt(0);
+        }
+
+        public void SetValueHalfs(List<int> randomValues)
+        {
+            for (int i = 0; i < _halfs.Count; i++)
+            {
+                SetValueHalf(_halfs[i], randomValues);
             }
         }
 
@@ -91,8 +110,6 @@ namespace Domino
             {
                 _halfForCompare = _halfs[0];
             }
-            
-            //Debug.Log("_halfForCompare = " + _halfForCompare.gameObject.name);
         }
 
         private void SetSizeCollider()
@@ -125,17 +142,7 @@ namespace Domino
 
         private void SetElementForArray()
         {
-            /*foreach (var obj in _halfs)
-            {
-                Debug.Log("obj = " + obj);
-            }*/
-            
             _halfs.Reverse();
-
-            /*foreach (var obj in _halfs)
-            {
-                Debug.Log("obj = " + obj);
-            }*/
         }
     }
 }
