@@ -1,4 +1,3 @@
-using System;
 using Domino;
 using UniRx;
 using UnityEngine;

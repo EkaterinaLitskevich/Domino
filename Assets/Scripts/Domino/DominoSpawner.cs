@@ -1,11 +1,9 @@
-using System;
 using System.Collections.Generic;
 using DragAndDrop;
 using Random;
 using UniRx;
 using UnityEngine;
 using Zenject;
-using Random = UnityEngine.Random;
 
 namespace Domino
 {
@@ -29,6 +27,7 @@ namespace Domino
         private void OnEnable()
         {
             _dominoPlacement.Trigger.Where(result => result.Key.Equals(KeysStorage.DominoPlacement)).Subscribe(AddToListDominoStand).AddTo(_disposable);
+            _dominoPlacement.Trigger.Where(result => result.Key.Equals(KeysStorage.DominoDestroy)).Subscribe(RemoveFromArray).AddTo(_disposable);
             _dominoPlacement.Trigger.Where(result => result.Key.Equals(KeysStorage.EmptyRowUp)).Subscribe(CreateDominoStand).AddTo(_disposable);
         }
 
@@ -60,6 +59,25 @@ namespace Domino
             }
         }
 
+        private void RemoveFromArray(CallBackDominoPlacement callBackDominoPlacement)
+        {
+            SearchDominoInArray(_dominoControllersStand, callBackDominoPlacement.DominoControllerStand);
+            SearchDominoInArray(_dominoControllersGame, callBackDominoPlacement.DominoControllerGame);
+        }
+
+        private void SearchDominoInArray(List<DominoController> dominoControllers, DominoController dominoControllerStand)
+        {
+            for (int i = 0; i < dominoControllers.Count; i++)
+            {
+                if (dominoControllers[i] == dominoControllerStand)
+                {
+                    dominoControllers.RemoveAt(i);
+                    
+                    return;
+                }
+            }
+        }
+
         private void CreateDominoStand(CallBackDominoPlacement callBackDominoPlacement)
         {
             InitialDomino(_dominoControllersStand, _amountDominoStand, true);
@@ -72,8 +90,8 @@ namespace Domino
 
         private void AddToListDominoStand(CallBackDominoPlacement callBackDominoPlacement)
         {
-            _dominoControllersStand.Add(callBackDominoPlacement.DominoController);
-            _dominoControllersGame.Remove(callBackDominoPlacement.DominoController);
+            _dominoControllersStand.Add(callBackDominoPlacement.DominoControllerGame);
+            _dominoControllersGame.Remove(callBackDominoPlacement.DominoControllerGame);
 
             CheckArrayDominoGame();
         }
@@ -96,28 +114,27 @@ namespace Domino
 
                 dominoControllers.Add(dominoController);
 
-                List<int> randomValues = CreateRandomValuesArray(dominoController.HalfsCount);
+                List<int>  randomValues = CreateRandomValuesArray(dominoController.HalfsCount);
                 dominoController.Initial(randomValues);
             }
         }
         
         private List<int> CreateRandomValuesArray(int amountHalfs)
-        {
-            List<int> randomValues = new List<int>();
+        { 
+            List<int> halfs = new List<int>();
 
             for (int i = 0; i < amountHalfs; i++)
             {
                 int randomValue = _randomizer.GetRandomValue(MinValue, MaxValue);
-                randomValues.Add(randomValue);
+                halfs.Add(randomValue);
             }
             
-            return randomValues;
+            return halfs;
         }
         
         private DominoController CreateDomino(bool isStand)
         {
-            DominoController dominoController =
-                Instantiate(_dominoPrefab, transform);
+            DominoController dominoController = Instantiate(_dominoPrefab, transform);
             dominoController.IsStand = isStand;
 
             if (isStand)

@@ -14,7 +14,6 @@ namespace Random
         private System.Random _random = new System.Random();
         public int GetRandomValue(int minValue, int maxValue)
         {
-            //System.Random random = new System.Random();
             int value = _random.Next(minValue, maxValue + 1);
             return value;
         }

@@ -6,6 +6,7 @@ using DragAndDrop;
 using UniRx;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace Domino
 {
@@ -51,9 +52,9 @@ namespace Domino
             _defaultSize = transform.localScale;
         }
 
-        public void Initial(List<int> randomValues)
+        public void Initial(List<int> halfs)
         {
-            FillArray(randomValues);
+            FillArray(halfs);
             SetHalfForCompare();
             SetSizeCollider();
             CalculateDefaultSizeDelta();
@@ -67,7 +68,7 @@ namespace Domino
             }
         }
 
-        private void FillArray(List<int> randomValues)
+        private void FillArray(List<int> halfs)
         {
             Half half;
             int index = 0;
@@ -76,7 +77,7 @@ namespace Domino
             {
                 half = Instantiate(_halfPrefab, transform);
 
-                SetValueHalf(half, randomValues);
+                SetValueHalf(half, halfs);
                 
                 half.gameObject.name = "Half " + index;
                 
@@ -85,21 +86,22 @@ namespace Domino
                 index++;
             }
         }
-
-        private void SetValueHalf(Half half, List<int> randomValues)
-        {
-            half.SetValue(randomValues[0]);
-            randomValues.RemoveAt(0);
-        }
-
-        public void SetValueHalfs(List<int> randomValues)
+        
+        public void SetValueHalfs(List<int> halfs)
         {
             for (int i = 0; i < _halfs.Count; i++)
             {
-                SetValueHalf(_halfs[i], randomValues);
+                SetValueHalf(_halfs[i], halfs);
             }
         }
 
+        private void SetValueHalf(Half half, List<int> halfs)
+        {
+            half.SetValue(halfs[0]);
+
+            halfs.Remove(0);
+        }
+        
         private void SetHalfForCompare()
         {
             if (IsStand)

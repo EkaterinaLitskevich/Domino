@@ -14,18 +14,35 @@ namespace Installers
         [SerializeField] private string _nameDominoSpawnerPath;
         [SerializeField] private string _nameLevelControllerPath;
         [SerializeField] private string _nameGameScreenPath;
+        [SerializeField] private string _nameDominoHalfSourcePath;
         [SerializeField] private DominoPlacement _dominoPlacement;
+        [SerializeField] private DominoHalfSource _dominoHalfSource;
         [SerializeField] private Canvas _canvas;
         
         public override async void InstallBindings()
         {
+            BindDominoSource();
             BindRandomizer();
             BindDominoPlacement();
             await BindDominoSpawner();
             BindGameScreen();
             BindLevelController();
         }
-        
+
+        private async void BindDominoSource()
+        {
+            var loadRequest = Resources.LoadAsync<DominoHalfSource>(_nameGameScreenPath);
+
+            await UniTask.WaitUntil(() => loadRequest.isDone);
+
+            DominoHalfSource dominoHalfSource = (DominoHalfSource)loadRequest.asset;
+            
+            Container
+                .Bind<DominoHalfSource>()
+                .FromInstance(dominoHalfSource)
+                .AsSingle();
+        }
+
         private async void BindGameScreen()
         {
             var loadRequest = Resources.LoadAsync<GameScreen>(_nameGameScreenPath);

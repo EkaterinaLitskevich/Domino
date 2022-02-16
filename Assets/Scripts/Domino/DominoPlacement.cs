@@ -118,27 +118,67 @@ namespace Domino
 
             for (int i = 0; i < colliders.Length; i++)
             {
-                if (colliders[i].collider.TryGetComponent(out DominoController standDominoController))
+                if (colliders[i].collider.TryGetComponent(out DominoController dominoControllerStand))
                 {
-                    if (standDominoController.IsStand && standDominoController.IsLast)
+                    if (dominoControllerStand.IsStand && dominoControllerStand.IsLast)
                     {
-                        CalculatePosition(standDominoController);
-                        AddToList(standDominoController);
+                        bool isFit = CompareDomino(_dominoCintrollerUsed, dominoControllerStand);
+
+                        if (!isFit)
+                        {
+                            CalculatePosition(dominoControllerStand);
+                            AddToArray(dominoControllerStand);
                         
-                        _dominoCintrollerUsed.IsStand = true;
+                            _dominoCintrollerUsed.IsStand = true;
 
-                        standDominoController.IsLast = false;
-                        _dominoCintrollerUsed.IsLast = true;
+                            dominoControllerStand.IsLast = false;
+                            _dominoCintrollerUsed.IsLast = true;
+                            
+                            listeners.OnNext(new CallBackDominoPlacement(KeysStorage.DominoPlacement, _dominoCintrollerUsed, null));
+                        }
+                        else
+                        {
+                            listeners.OnNext(new CallBackDominoPlacement(KeysStorage.DominoDestroy, _dominoCintrollerUsed, dominoControllerStand));
+                        }
+                        
+                        return;
+                    }
+                }
+            }
+        }
 
-                        listeners.OnNext(new CallBackDominoPlacement(KeysStorage.DominoPlacement, _dominoCintrollerUsed));
+        private bool CompareDomino(DominoController dominoGame, DominoController dominoStand)
+        {
+            if (dominoGame.HalfForCompare.Value == dominoStand.HalfForCompare.Value)
+            {
+                RemoveFromArray(dominoStand);
+                Destroy(dominoGame.gameObject);
+                
+                return true;
+            }
 
+            return false;
+        }
+
+        private void RemoveFromArray(DominoController dominoStand)
+        {
+            for (int i = 0; i < _columnsDomino.Count; i++)
+            {
+                for (int j = 0; j < _columnsDomino[i].Count; j++)
+                {
+                    if (_columnsDomino[i][j] == dominoStand)
+                    {
+                        Destroy(_columnsDomino[i][j].gameObject);
+                        _columnsDomino[i].RemoveAt(j);
+                        
                         return;
                     }
                 }
             }
         }
         
-        private void AddToList(DominoController standDominoController)
+        
+        private void AddToArray(DominoController standDominoController)
         {
             for (int i = 0; i < _columnsDomino.Count; i++)
             {
@@ -183,7 +223,7 @@ namespace Domino
                 _columnsDomino.RemoveAt(i);
             }
             
-            listeners.OnNext(new CallBackDominoPlacement(KeysStorage.EmptyRowUp, _dominoCintrollerUsed));
+            listeners.OnNext(new CallBackDominoPlacement(KeysStorage.EmptyRowUp, _dominoCintrollerUsed, null));
         }
 
         private void CalculatePosition(DominoController standDominoController)

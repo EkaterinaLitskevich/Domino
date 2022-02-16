@@ -1,18 +1,16 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using JetBrains.Annotations;
 using UnityEngine;
-using UnityEngine.UIElements;
+using Zenject;
 using Image = UnityEngine.UI.Image;
-using Random = System.Random;
 
 public class Half : MonoBehaviour
 {
     [SerializeField] private RectTransform _rectTransform;
     [SerializeField] private Image _image;
     
+    [Inject] private DominoHalfSource _dominoHalfSource;
+    
     private int _value;
+    public int Value => _value;
 
     public Vector2 SizeDelta
     {
@@ -21,10 +19,12 @@ public class Half : MonoBehaviour
 
     public void SetValue(int value)
     {
+        Debug.Log(_dominoHalfSource);
+        
         _value = value;
-    }
-
-    private void SetImage()
-    {
+        if (_dominoHalfSource.GetImage(value) != null)
+        {
+            _image = _dominoHalfSource.GetImage(value);
+        }
     }
 }

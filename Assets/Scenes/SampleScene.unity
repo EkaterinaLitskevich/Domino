@@ -435,7 +435,9 @@ MonoBehaviour:
   _nameDominoSpawnerPath: DominoCreater/DominoSpawner
   _nameLevelControllerPath: Controllers/LevelController
   _nameGameScreenPath: UI/GameScreen
+  _nameDominoHalfSourcePath: Setting/Domino
   _dominoPlacement: {fileID: 1129352539}
+  _dominoHalfSource: {fileID: 11400000, guid: d045070e09074f14788e6a89d346f887, type: 2}
   _canvas: {fileID: 1967746838}
 --- !u!4 &898240184
 Transform:
