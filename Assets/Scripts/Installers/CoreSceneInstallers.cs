@@ -11,10 +11,12 @@ namespace Installers
 {
     public class CoreSceneInstallers : MonoInstaller
     {
+        public static Context Context { get; private set; }
+
+        [SerializeField] private Context _context;
         [SerializeField] private string _nameDominoSpawnerPath;
         [SerializeField] private string _nameLevelControllerPath;
         [SerializeField] private string _nameGameScreenPath;
-        [SerializeField] private string _nameDominoHalfSourcePath;
         [SerializeField] private DominoPlacement _dominoPlacement;
         [SerializeField] private DominoHalfSource _dominoHalfSource;
         [SerializeField] private Canvas _canvas;
@@ -27,20 +29,16 @@ namespace Installers
             await BindDominoSpawner();
             BindGameScreen();
             BindLevelController();
+
+            Context = _context;
         }
 
-        private async void BindDominoSource()
+        private void BindDominoSource()
         {
-            var loadRequest = Resources.LoadAsync<DominoHalfSource>(_nameGameScreenPath);
-
-            await UniTask.WaitUntil(() => loadRequest.isDone);
-
-            DominoHalfSource dominoHalfSource = (DominoHalfSource)loadRequest.asset;
-            
             Container
                 .Bind<DominoHalfSource>()
-                .FromInstance(dominoHalfSource)
-                .AsSingle();
+                .FromInstance(_dominoHalfSource)
+                .AsSingle().NonLazy();
         }
 
         private async void BindGameScreen()

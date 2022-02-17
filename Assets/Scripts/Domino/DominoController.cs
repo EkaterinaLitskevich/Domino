@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using DragAndDrop;
+using Installers;
 using UniRx;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -76,6 +77,7 @@ namespace Domino
             for (int i = 0; i < _amountHalfs; i++)
             {
                 half = Instantiate(_halfPrefab, transform);
+                CoreSceneInstallers.Context.Container.Inject(half);
 
                 SetValueHalf(half, halfs);
                 
