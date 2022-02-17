@@ -28,7 +28,7 @@ namespace Domino
         {
             _dominoPlacement.Trigger.Where(result => result.Key.Equals(KeysStorage.DominoPlacement)).Subscribe(AddToListDominoStand).AddTo(_disposable);
             _dominoPlacement.Trigger.Where(result => result.Key.Equals(KeysStorage.DominoDestroy)).Subscribe(RemoveFromArray).AddTo(_disposable);
-            _dominoPlacement.Trigger.Where(result => result.Key.Equals(KeysStorage.EmptyRowUp)).Subscribe(CreateDominoStand).AddTo(_disposable);
+            _dominoPlacement.Trigger.Where(result => result.Key.Equals(KeysStorage.EmptyRowDown)).Subscribe(CreateDominoStand).AddTo(_disposable);
         }
 
         private void OnDisable()
@@ -63,6 +63,24 @@ namespace Domino
         {
             SearchDominoInArray(_dominoControllersStand, callBackDominoPlacement.DominoControllerStand);
             SearchDominoInArray(_dominoControllersGame, callBackDominoPlacement.DominoControllerGame);
+
+            CheckArrayDominoGame();
+
+            if (callBackDominoPlacement.DominoControllerStand.IsFirst)
+            {
+                CreateNewDominoStand(callBackDominoPlacement.DominoControllerStand);
+            }
+        }
+
+        private void CreateNewDominoStand(DominoController dominoControllerStand)
+        {
+            bool isFirst = dominoControllerStand.IsFirst;
+            bool isLast = dominoControllerStand.IsLast;
+            
+            InitialDomino(_dominoControllersStand, 1, true, isFirst, isLast);
+            
+            int lastIndex = _dominoControllersStand.Count - 1;
+            _dominoControllersStand[lastIndex].RectTransform.anchoredPosition = dominoControllerStand.RectTransform.anchoredPosition;
         }
 
         private void SearchDominoInArray(List<DominoController> dominoControllers, DominoController dominoControllerStand)
@@ -80,12 +98,12 @@ namespace Domino
 
         private void CreateDominoStand(CallBackDominoPlacement callBackDominoPlacement)
         {
-            InitialDomino(_dominoControllersStand, _amountDominoStand, true);
+            InitialDomino(_dominoControllersStand, _amountDominoStand, true, true, true);
         }
         
         private void CreateDominoGame()
         {
-            InitialDomino(_dominoControllersGame, _amountDominoGame, false);
+            InitialDomino(_dominoControllersGame, _amountDominoGame, false, false, false);
         }
 
         private void AddToListDominoStand(CallBackDominoPlacement callBackDominoPlacement)
@@ -104,17 +122,17 @@ namespace Domino
             }
         }
 
-        private void InitialDomino(List<DominoController> dominoControllers, int amountDomino, bool isStand)
+        private void InitialDomino(List<DominoController> dominoControllers, int amountDomino, bool isStand, bool isFirst, bool isLast)
         {
             for (int i = 0; i < amountDomino; i++)
             {
-                DominoController dominoController = CreateDomino(isStand);
+                DominoController dominoController = CreateDomino(isStand, isFirst, isLast);
                 
                 _dominoPlacement.PlaceDomino(dominoController, isStand);
 
                 dominoControllers.Add(dominoController);
 
-                List<int>  randomValues = CreateRandomValuesArray(dominoController.HalfsCount);
+                List<int> randomValues = CreateRandomValuesArray(dominoController.HalfsCount);
                 dominoController.Initial(randomValues);
             }
         }
@@ -132,15 +150,13 @@ namespace Domino
             return halfs;
         }
         
-        private DominoController CreateDomino(bool isStand)
+        private DominoController CreateDomino(bool isStand, bool isFirst, bool isLast)
         {
             DominoController dominoController = Instantiate(_dominoPrefab, transform);
+            
             dominoController.IsStand = isStand;
-
-            if (isStand)
-            {
-                dominoController.IsLast = true;
-            }
+            dominoController.IsFirst = isFirst;
+            dominoController.IsLast = isLast;
 
             return dominoController;
         }

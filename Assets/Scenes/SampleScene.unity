@@ -432,10 +432,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdb485f49000f744d882aa48cbbcc833, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _context: {fileID: 277099879}
   _nameDominoSpawnerPath: DominoCreater/DominoSpawner
   _nameLevelControllerPath: Controllers/LevelController
   _nameGameScreenPath: UI/GameScreen
-  _nameDominoHalfSourcePath: Settings/Domino
   _dominoPlacement: {fileID: 1129352539}
   _dominoHalfSource: {fileID: 11400000, guid: d045070e09074f14788e6a89d346f887, type: 2}
   _canvas: {fileID: 1967746838}

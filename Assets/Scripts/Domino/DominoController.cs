@@ -36,6 +36,7 @@ namespace Domino
         public int HalfsCount => _amountHalfs;
         public bool IsStand { get; set; }
         public bool IsLast { get; set; }
+        public bool IsFirst { get; set; }
 
         private void OnEnable()
         {

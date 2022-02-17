@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using Zenject;
 using Image = UnityEngine.UI.Image;
@@ -6,6 +7,7 @@ public class Half : MonoBehaviour
 {
     [SerializeField] private RectTransform _rectTransform;
     [SerializeField] private Image _image;
+    [SerializeField] private TextMeshProUGUI _text;
     
     [Inject] private DominoHalfSource _dominoHalfSource;
     
@@ -19,12 +21,12 @@ public class Half : MonoBehaviour
 
     public void SetValue(int value)
     {
-        Debug.Log(_dominoHalfSource);
+        _text.text = string.Format("{0}", value);
         
         _value = value;
         if (_dominoHalfSource.GetImage(value) != null)
         {
-            _image = _dominoHalfSource.GetImage(value);
+            //_image = _dominoHalfSource.GetImage(value);
         }
     }
 }

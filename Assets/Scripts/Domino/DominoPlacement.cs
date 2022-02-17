@@ -170,6 +170,12 @@ namespace Domino
                     {
                         Destroy(_columnsDomino[i][j].gameObject);
                         _columnsDomino[i].RemoveAt(j);
+
+                        int previousIndex = j - 1;
+                        if (_columnsDomino[i].Count > previousIndex && previousIndex >= 0)
+                        {
+                            _columnsDomino[i][previousIndex].IsLast = true;
+                        }
                         
                         return;
                     }
@@ -223,7 +229,7 @@ namespace Domino
                 _columnsDomino.RemoveAt(i);
             }
             
-            listeners.OnNext(new CallBackDominoPlacement(KeysStorage.EmptyRowUp, _dominoCintrollerUsed, null));
+            listeners.OnNext(new CallBackDominoPlacement(KeysStorage.EmptyRowDown, _dominoCintrollerUsed, null));
         }
 
         private void CalculatePosition(DominoController standDominoController)
