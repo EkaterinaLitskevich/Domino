@@ -111,6 +111,8 @@ namespace Domino
             _dominoControllersStand.Add(callBackDominoPlacement.DominoControllerGame);
             _dominoControllersGame.Remove(callBackDominoPlacement.DominoControllerGame);
 
+            callBackDominoPlacement.DominoControllerGame.SetHalfForCompare();
+
             CheckArrayDominoGame();
         }
         

@@ -17,6 +17,7 @@ namespace Installers
         [SerializeField] private string _nameDominoSpawnerPath;
         [SerializeField] private string _nameLevelControllerPath;
         [SerializeField] private string _nameGameScreenPath;
+        [SerializeField] private string _nameStartScreenPath;
         [SerializeField] private DominoPlacement _dominoPlacement;
         [SerializeField] private DominoHalfSource _dominoHalfSource;
         [SerializeField] private Canvas _canvas;
@@ -28,7 +29,8 @@ namespace Installers
             BindDominoPlacement();
             await BindDominoSpawner();
             BindGameScreen();
-            BindLevelController();
+            await BindLevelController();
+            BindStartScreen();
 
             Context = _context;
         }
@@ -39,6 +41,18 @@ namespace Installers
                 .Bind<DominoHalfSource>()
                 .FromInstance(_dominoHalfSource)
                 .AsSingle().NonLazy();
+        }
+        
+        private async void BindStartScreen()
+        {
+            var loadRequest = Resources.LoadAsync<StartScreen>(_nameStartScreenPath);
+
+            await UniTask.WaitUntil(() => loadRequest.isDone);
+            
+            StartScreen startScreen = Container
+                .InstantiatePrefabForComponent<StartScreen>(loadRequest.asset, _canvas.transform);
+            
+            BindObjectAsSingle(startScreen);
         }
 
         private async void BindGameScreen()
@@ -76,7 +90,7 @@ namespace Installers
             BindObjectAsSingle(dominoSpawner);
         }
         
-        private async void BindLevelController()
+        private async Task BindLevelController()
         {
             var loadRequest = Resources.LoadAsync<LevelController>(_nameLevelControllerPath);
 

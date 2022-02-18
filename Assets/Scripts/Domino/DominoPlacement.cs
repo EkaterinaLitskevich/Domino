@@ -1,12 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Cysharp.Threading.Tasks;
 using DragAndDrop;
 using UniRx;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Serialization;
 
 namespace Domino
 {

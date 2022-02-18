@@ -13,6 +13,7 @@ public class Half : MonoBehaviour
     
     private int _value;
     public int Value => _value;
+    public Image Image => _image;
 
     public Vector2 SizeDelta
     {

@@ -1,13 +1,8 @@
-using System;
-using System.Linq;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using DragAndDrop;
 using Installers;
 using UniRx;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 namespace Domino
 {
@@ -102,10 +97,10 @@ namespace Domino
         {
             half.SetValue(halfs[0]);
 
-            halfs.Remove(0);
+            halfs.RemoveAt(0);
         }
         
-        private void SetHalfForCompare()
+        public void SetHalfForCompare()
         {
             if (IsStand)
             {

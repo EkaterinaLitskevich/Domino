@@ -24,7 +24,7 @@ namespace Controllers
             _disposable.Dispose();
         }
 
-        private void Initialize()
+        public void Initialize()
         {
             _dominoSpawner.CreateStartDomino();
         }

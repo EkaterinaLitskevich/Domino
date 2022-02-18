@@ -436,6 +436,7 @@ MonoBehaviour:
   _nameDominoSpawnerPath: DominoCreater/DominoSpawner
   _nameLevelControllerPath: Controllers/LevelController
   _nameGameScreenPath: UI/GameScreen
+  _nameStartScreenPath: UI/StartScreen
   _dominoPlacement: {fileID: 1129352539}
   _dominoHalfSource: {fileID: 11400000, guid: d045070e09074f14788e6a89d346f887, type: 2}
   _canvas: {fileID: 1967746838}
@@ -547,7 +548,7 @@ MonoBehaviour:
   - {fileID: 2036567546}
   - {fileID: 1125657438}
   _offsetBetweenDomino: 10
-  _dominoVisibilityRange: 150
+  _dominoVisibilityRange: 50
   _maxHalfsInColumn: 7
 --- !u!1 &1397691037
 GameObject:
