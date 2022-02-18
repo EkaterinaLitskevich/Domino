@@ -135,14 +135,24 @@ namespace Domino
         
         public void Rotate()
         {
-            transform.Rotate(0,0, ValueRotateZ);
+            //transform.Rotate(0,0, ValueRotateZ);
             SetElementForArray();
             SetHalfForCompare();
         }
 
         private void SetElementForArray()
         {
+            for (int i = 0; i < _halfs.Count; i++)
+            {
+                _halfs[i].transform.SetParent(null);
+            }
+            
             _halfs.Reverse();
+
+            for (int i = 0; i < _halfs.Count; i++)
+            {
+                _halfs[i].transform.SetParent(transform);
+            }
         }
     }
 }
