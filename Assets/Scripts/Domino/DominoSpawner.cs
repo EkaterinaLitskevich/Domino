@@ -61,14 +61,14 @@ namespace Domino
 
         private void RemoveFromArray(CallBackDominoPlacement callBackDominoPlacement)
         {
-            SearchDominoInArray(_dominoControllersStand, callBackDominoPlacement.DominoControllerStand);
+            //SearchDominoInArray(_dominoControllersStand, callBackDominoPlacement.DominoControllerStand);
             SearchDominoInArray(_dominoControllersGame, callBackDominoPlacement.DominoControllerGame);
 
             CheckArrayDominoGame();
 
             if (callBackDominoPlacement.DominoControllerStand.IsFirst)
             {
-                CreateNewDominoStand(callBackDominoPlacement.DominoControllerStand);
+                //CreateNewDominoStand(callBackDominoPlacement.DominoControllerStand);
             }
         }
 

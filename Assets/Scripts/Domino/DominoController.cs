@@ -59,6 +59,8 @@ namespace Domino
 
         private void CalculateDefaultSizeDelta()
         {
+            _defaultSizeDelta = Vector2.zero;
+            
             for (int i = 0; i < _halfs.Count; i++)
             {
                 _defaultSizeDelta += new Vector2(0, _halfs[i].SizeDelta.y);
@@ -110,6 +112,38 @@ namespace Domino
             {
                 _halfForCompare = _halfs[0];
             }
+        }
+
+        public bool RemoveHalf()
+        {
+            Vector2 oldPosition = _rectTransform.anchoredPosition;
+            
+            for (int i = 0; i < _halfs.Count; i++)
+            {
+                if (_halfs[i] == _halfForCompare)
+                {
+                    Destroy(_halfs[i].gameObject);
+                    _halfs.RemoveAt(i);
+                    
+                    break;
+                }
+            }
+            
+            _amountHalfs = _halfs.Count;
+
+            if ( _halfs.Count == 0)
+            {
+                return true;
+            }
+
+            float halfHalfY = _halfs[0].SizeDelta.y / 2;
+            _rectTransform.anchoredPosition = oldPosition + new Vector2(0, halfHalfY);
+            
+            CalculateDefaultSizeDelta();
+            SetSizeCollider();
+            SetHalfForCompare();
+
+            return false;
         }
 
         private void SetSizeCollider()
