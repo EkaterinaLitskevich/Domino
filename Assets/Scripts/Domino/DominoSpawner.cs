@@ -61,26 +61,7 @@ namespace Domino
 
         private void RemoveFromArray(CallBackDominoPlacement callBackDominoPlacement)
         {
-            //SearchDominoInArray(_dominoControllersStand, callBackDominoPlacement.DominoControllerStand);
-            SearchDominoInArray(_dominoControllersGame, callBackDominoPlacement.DominoControllerGame);
-
-            CheckArrayDominoGame();
-
-            if (callBackDominoPlacement.DominoControllerStand.IsFirst)
-            {
-                //CreateNewDominoStand(callBackDominoPlacement.DominoControllerStand);
-            }
-        }
-
-        private void CreateNewDominoStand(DominoController dominoControllerStand)
-        {
-            bool isFirst = dominoControllerStand.IsFirst;
-            bool isLast = dominoControllerStand.IsLast;
-            
-            InitialDomino(_dominoControllersStand, 1, true, isFirst, isLast);
-            
-            int lastIndex = _dominoControllersStand.Count - 1;
-            _dominoControllersStand[lastIndex].RectTransform.anchoredPosition = dominoControllerStand.RectTransform.anchoredPosition;
+            SearchDominoInArray(_dominoControllersStand, callBackDominoPlacement.DominoControllerStand);
         }
 
         private void SearchDominoInArray(List<DominoController> dominoControllers, DominoController dominoControllerStand)

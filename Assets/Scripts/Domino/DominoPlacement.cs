@@ -121,38 +121,24 @@ namespace Domino
                     {
                         bool isFit = CompareDomino(_dominoCintrollerUsed, dominoControllerStand);
 
-                        bool isEmptyDominoStand = false;
-                        bool isEmptyDominoGame = false;
-
                         if (isFit)
                         {
-                            isEmptyDominoGame = _dominoCintrollerUsed.RemoveHalf();
-                            isEmptyDominoStand = dominoControllerStand.RemoveHalf();
+                            _dominoCintrollerUsed.RemoveHalf();
+                            bool isEmptyDominoStand = dominoControllerStand.RemoveHalf();
 
                             if (isEmptyDominoStand)
                             {
-                                DestroyDomino(dominoControllerStand, null);
-                            }
-
-                            if (isEmptyDominoGame)
-                            {
-                                DestroyDomino(null, _dominoCintrollerUsed);
+                                DestroyDomino(ref dominoControllerStand, null);
                             }
                         }
 
-                        if (!isEmptyDominoStand)
-                        {
-                            CalculatePosition(dominoControllerStand);
-                            AddToArray(dominoControllerStand);
-                            dominoControllerStand.IsLast = false;
-                        }
-
-                        if (!isEmptyDominoGame)
-                        {
-                            _dominoCintrollerUsed.IsStand = true;
-                            _dominoCintrollerUsed.IsLast = true;
-                        }
+                        CalculatePosition(dominoControllerStand);
+                        AddToArray(dominoControllerStand);
                         
+                        dominoControllerStand.IsLast = false;
+                        _dominoCintrollerUsed.IsStand = true;
+                        _dominoCintrollerUsed.IsLast = true;
+
                         listeners.OnNext(new CallBackDominoPlacement(KeysStorage.DominoPlacement, _dominoCintrollerUsed, null));
 
                         return;
@@ -161,27 +147,23 @@ namespace Domino
             }
         }
 
-        private void DestroyDomino(DominoController dominoStand, DominoController dominoGame)
+        private void DestroyDomino(ref DominoController dominoStand, DominoController dominoGame)
         {
-            RemoveFromArray(dominoStand);
-            Destroy(dominoStand.gameObject);
-            listeners.OnNext(new CallBackDominoPlacement(KeysStorage.DominoDestroy, dominoGame, dominoStand));
+            RemoveFromArray(ref dominoStand);
+            listeners.OnNext(new CallBackDominoPlacement(KeysStorage.DominoDestroy, null, dominoStand));
         }
 
         private bool CompareDomino(DominoController dominoGame, DominoController dominoStand)
         {
             if (dominoGame.HalfForCompare.Value == dominoStand.HalfForCompare.Value)
             {
-                //RemoveFromArray(dominoStand);
-                //Destroy(dominoGame.gameObject);
-                
                 return true;
             }
 
             return false;
         }
 
-        private void RemoveFromArray(DominoController dominoStand)
+        private void RemoveFromArray(ref DominoController dominoStand)
         {
             for (int i = 0; i < _columnsDomino.Count; i++)
             {
@@ -196,9 +178,10 @@ namespace Domino
                          if (_columnsDomino[i].Count > previousIndex && previousIndex >= 0)
                          {
                              _columnsDomino[i][previousIndex].IsLast = true;
-                         }
-                        
-                        return;
+                             dominoStand = _columnsDomino[i][previousIndex];
+                         } 
+                         
+                         return;
                     }
                 }
             }

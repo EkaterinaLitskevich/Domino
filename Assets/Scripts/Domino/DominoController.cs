@@ -169,7 +169,6 @@ namespace Domino
         
         public void Rotate()
         {
-            //transform.Rotate(0,0, ValueRotateZ);
             SetElementForArray();
             SetHalfForCompare();
         }

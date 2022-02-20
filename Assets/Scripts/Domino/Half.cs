@@ -12,9 +12,9 @@ public class Half : MonoBehaviour
     [Inject] private DominoHalfSource _dominoHalfSource;
     
     private int _value;
+    
     public int Value => _value;
     public Image Image => _image;
-
     public Vector2 SizeDelta
     {
         get => _rectTransform.sizeDelta;
