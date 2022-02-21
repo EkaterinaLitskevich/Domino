@@ -25,7 +25,7 @@ namespace Domino
             {
                 ColumnDomino columnDomino = Instantiate(_columnDominoPrefab, transform);
                 columnDomino.RectTransform.anchoredPosition = _columnPlacement.GetPositionColumn();
-                columnDomino.SetFirstPointPositionDomino(new Vector3(columnDomino.transform.position.x, Screen.height - 200, 0));
+                columnDomino.SetFirstPointPositionDomino(new Vector3(columnDomino.RectTransform.anchoredPosition.x, Screen.height / 2 - 200, 0));
                 
                 _columnsDomino.Add(columnDomino);
             }
