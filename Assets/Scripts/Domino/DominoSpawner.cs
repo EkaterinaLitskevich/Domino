@@ -13,7 +13,7 @@ namespace Domino
         private const int MinValue = 0;
         
         [SerializeField] private DominoController _dominoPrefab;
-        [SerializeField] private int _amountDominoStand;
+        [SerializeField] private int _amountColumnStand;
         [SerializeField] private int _amountDominoGame;
 
         private List<DominoController> _dominoControllersStand = new List<DominoController>();
@@ -22,6 +22,7 @@ namespace Domino
         private CompositeDisposable _disposable = new CompositeDisposable();
 
         [Inject] private DominoPlacement _dominoPlacement;
+        [Inject] private ColumnSpawner _columnSpawner;
         [Inject] private IRandom _randomizer;
 
         private void OnEnable()
@@ -38,6 +39,7 @@ namespace Domino
 
         public void CreateStartDomino()
         {
+            _columnSpawner.InitialColumn(_amountColumnStand);
             CreateDominoStand(null);
             CreateDominoGame();
         }
@@ -79,7 +81,7 @@ namespace Domino
 
         private void CreateDominoStand(CallBackDominoPlacement callBackDominoPlacement)
         {
-            InitialDomino(_dominoControllersStand, _amountDominoStand, true, true, true);
+            InitialDomino(_dominoControllersStand, _amountColumnStand, true, true, true);
         }
         
         private void CreateDominoGame()
@@ -105,13 +107,13 @@ namespace Domino
             }
         }
 
-        private void InitialDomino(List<DominoController> dominoControllers, int amountDomino, bool isStand, bool isFirst, bool isLast)
+        private void InitialDomino(List<DominoController> dominoControllers, int amountColumn, bool isStand, bool isFirst, bool isLast)
         {
-            for (int i = 0; i < amountDomino; i++)
+            for (int i = 0; i < amountColumn; i++)
             {
                 DominoController dominoController = CreateDomino(isStand, isFirst, isLast);
                 
-                _dominoPlacement.PlaceDomino(dominoController, isStand);
+                _dominoPlacement.PlaceDomino(dominoController, isStand, _columnSpawner.ColumnsDomino[i]);
 
                 dominoControllers.Add(dominoController);
 

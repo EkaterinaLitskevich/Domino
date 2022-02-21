@@ -18,15 +18,19 @@ namespace Installers
         [SerializeField] private string _nameLevelControllerPath;
         [SerializeField] private string _nameGameScreenPath;
         [SerializeField] private string _nameStartScreenPath;
+        [SerializeField] private string _nameColumnSpawnerPath;
         [SerializeField] private DominoPlacement _dominoPlacement;
         [SerializeField] private DominoHalfSource _dominoHalfSource;
+        [SerializeField] private ColumnPlacement _сolumnPlacement;
         [SerializeField] private Canvas _canvas;
         
         public override async void InstallBindings()
         {
+            BindColumnPlacement();
             BindDominoSource();
             BindRandomizer();
             BindDominoPlacement();
+            BindColumnSpawner();
             await BindDominoSpawner();
             BindGameScreen();
             await BindLevelController();
@@ -35,12 +39,29 @@ namespace Installers
             Context = _context;
         }
 
+        private void BindColumnPlacement()
+        {
+            BindObjectAsSingle(_сolumnPlacement);
+        }
+        
         private void BindDominoSource()
         {
             Container
                 .Bind<DominoHalfSource>()
                 .FromInstance(_dominoHalfSource)
                 .AsSingle().NonLazy();
+        }
+        
+        private async void BindColumnSpawner()
+        {
+            var loadRequest = Resources.LoadAsync<ColumnSpawner>(_nameColumnSpawnerPath);
+
+            await UniTask.WaitUntil(() => loadRequest.isDone);
+            
+            ColumnSpawner columnSpawner = Container
+                .InstantiatePrefabForComponent<ColumnSpawner>(loadRequest.asset, _canvas.transform);
+            
+            BindObjectAsSingle(columnSpawner);
         }
         
         private async void BindStartScreen()

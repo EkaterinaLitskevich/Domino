@@ -9,7 +9,7 @@ namespace Domino
 {
     public class DominoPlacement : MonoBehaviour
     {
-        [SerializeField] private List<RectTransform> _pointsPositionUp = new List<RectTransform>();
+        //[SerializeField] private List<RectTransform> _pointsPositionUp = new List<RectTransform>();
         [SerializeField] private List<RectTransform> _pointsPositionDown = new List<RectTransform>();
         [SerializeField] private float _offsetBetweenDomino;
         [SerializeField] private float _dominoVisibilityRange;
@@ -24,19 +24,19 @@ namespace Domino
 
         public IObservable<CallBackDominoPlacement> Trigger => listeners;
         
-        public void PlaceDomino(DominoController domino, bool isStand)
+        public void PlaceDomino(DominoController domino, bool isStand, ColumnDomino columnDomino)
         {
             SubscribeDrag(domino);
             
-            RectTransform point;
+            RectTransform point = new RectTransform();
 
             if (isStand)
             {
-                if (_indexElement >= _pointsPositionUp.Count)
-                {
-                    _indexElement = 0;
-                }
-                point = GetPointPosition(_pointsPositionUp);
+                // if (_indexElement >= _pointsPositionUp.Count) //column position
+                // {
+                //     _indexElement = 0;
+                // }
+                domino.RectTransform.anchoredPosition = columnDomino.FirstPointPosition;
 
                 CreateListColumn(domino);
             }
@@ -47,9 +47,10 @@ namespace Domino
                     _indexElement = 0;
                 }
                 point = GetPointPosition(_pointsPositionDown);
+                domino.RectTransform.anchoredPosition = point.anchoredPosition;
             }
             
-            domino.RectTransform.anchoredPosition = point.anchoredPosition;
+            //domino.RectTransform.anchoredPosition = point.anchoredPosition;
         }
 
         private void CreateListColumn(DominoController domino)
@@ -117,7 +118,7 @@ namespace Domino
             {
                 if (colliders[i].collider.TryGetComponent(out DominoController dominoControllerStand))
                 {
-                    if (dominoControllerStand.IsStand && dominoControllerStand.IsLast)
+                    if (dominoControllerStand.IsLast)
                     {
                         bool isFit = CompareDomino(_dominoCintrollerUsed, dominoControllerStand);
 
@@ -135,7 +136,6 @@ namespace Domino
                         CalculatePosition(dominoControllerStand);
                         AddToArray(dominoControllerStand);
                         
-                        dominoControllerStand.IsLast = false;
                         _dominoCintrollerUsed.IsStand = true;
                         _dominoCintrollerUsed.IsLast = true;
 
