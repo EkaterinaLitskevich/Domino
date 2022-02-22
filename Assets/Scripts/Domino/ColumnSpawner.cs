@@ -19,6 +19,14 @@ namespace Domino
             CreateColumn(amountColumn);
         }
 
+        public void ClearColumns()
+        {
+            for (int i = 0; i < _columnsDomino.Count; i++)
+            {
+                _columnsDomino[i].ClearList();
+            }
+        }
+
         private void CreateColumn(int amountColumn)
         {
             for (int i = 0; i < amountColumn; i++)

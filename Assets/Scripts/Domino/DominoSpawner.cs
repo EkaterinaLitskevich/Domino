@@ -29,7 +29,7 @@ namespace Domino
         {
             _dominoPlacement.Trigger.Where(result => result.Key.Equals(KeysStorage.DominoPlacement)).Subscribe(AddToListDominoStand).AddTo(_disposable);
             _dominoPlacement.Trigger.Where(result => result.Key.Equals(KeysStorage.DominoDestroy)).Subscribe(RemoveFromArray).AddTo(_disposable);
-            _dominoPlacement.Trigger.Where(result => result.Key.Equals(KeysStorage.EmptyRowDown)).Subscribe(CreateDominoStand).AddTo(_disposable);
+            _dominoPlacement.Trigger.Where(result => result.Key.Equals(KeysStorage.EmptyRowUp)).Subscribe(CreateDominoStand).AddTo(_disposable);
         }
 
         private void OnDisable()
@@ -81,6 +81,7 @@ namespace Domino
 
         private void CreateDominoStand(CallBackDominoPlacement callBackDominoPlacement)
         {
+            _columnSpawner.ClearColumns();
             InitialDomino(_dominoControllersStand, _amountColumnStand, true, true, true);
         }
         
@@ -141,7 +142,6 @@ namespace Domino
             
             dominoController.IsStand = isStand;
             dominoController.IsFirst = isFirst;
-            dominoController.IsLast = isLast;
 
             return dominoController;
         }

@@ -80,23 +80,8 @@ namespace Domino
             {
                 Vector2 point = new Vector2();
 
-                if (amountColumn % 2 != 0 && i == 0)
-                {
-                    point = new Vector2(pointX -= sizeDominoWidth + DistanceBetweenColumnsX, pointY); 
-                }
-                else
-                {
-                    if (i == 0)
-                    {
-                        point = new Vector2(pointX -= sizeDominoWidth + DistanceBetweenColumnsX, pointY); 
-                    }
-                    else
-                    {
-                        point = new Vector2(pointX -= sizeDominoWidth + DistanceBetweenColumnsX, pointY); 
-                    }
-                }
-                
-                
+                point = new Vector2(pointX -= sizeDominoWidth + DistanceBetweenColumnsX, pointY);
+
                 _positionsColumns.Add(point);
             }
         }

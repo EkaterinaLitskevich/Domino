@@ -7,6 +7,6 @@ namespace DragAndDrop
         public const string EndDrag = "EndDrag";
         public const string DominoPlacement = "DominoPlacement";
         public const string DominoDestroy = "DominoDestroy";
-        public const string EmptyRowDown = "EmptyRowDown";
+        public const string EmptyRowUp = "EmptyRowUp";
     }
 }

@@ -49,5 +49,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dominoPrefab: {fileID: 8091985120811169410, guid: 1e25ad5c7027dcf43a054fcc8cebdb5c, type: 3}
-  _amountColumnStand: 5
+  _amountColumnStand: 3
   _amountDominoGame: 3

@@ -46,10 +46,7 @@ namespace Installers
         
         private void BindDominoSource()
         {
-            Container
-                .Bind<DominoHalfSource>()
-                .FromInstance(_dominoHalfSource)
-                .AsSingle().NonLazy();
+            BindObjectAsSingle(_dominoHalfSource);
         }
         
         private async void BindColumnSpawner()
