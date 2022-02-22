@@ -49,3 +49,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _columnDominoPrefab: {fileID: 6557820299296155378, guid: a88c3394dbf4b764990188191896d03a, type: 3}
+  _indentForFirstDomino: 30

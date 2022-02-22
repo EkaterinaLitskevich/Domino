@@ -7,6 +7,7 @@ namespace Domino
     public class ColumnSpawner : MonoBehaviour
     {
         [SerializeField] private ColumnDomino _columnDominoPrefab;
+        [SerializeField] private float _indentForFirstDomino;
 
         private List<ColumnDomino> _columnsDomino = new List<ColumnDomino>();
         public List<ColumnDomino> ColumnsDomino => _columnsDomino;
@@ -33,6 +34,7 @@ namespace Domino
             {
                 ColumnDomino columnDomino = Instantiate(_columnDominoPrefab, transform);
                 columnDomino.RectTransform.anchoredPosition = _columnPlacement.GetPositionColumn();
+                
                 columnDomino.SetFirstPointPositionDomino(new Vector3(columnDomino.RectTransform.anchoredPosition.x, Screen.height / 2 - 200, 0));
                 
                 _columnsDomino.Add(columnDomino);

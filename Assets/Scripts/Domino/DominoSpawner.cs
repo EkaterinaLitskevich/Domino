@@ -114,12 +114,12 @@ namespace Domino
             {
                 DominoController dominoController = CreateDomino(isStand, isFirst, isLast);
                 
+                List<int> randomValues = CreateRandomValuesArray(dominoController.HalfsCount);
+                dominoController.Initial(randomValues);
+                
                 _dominoPlacement.PlaceDomino(dominoController, isStand, _columnSpawner.ColumnsDomino[i]);
 
                 dominoControllers.Add(dominoController);
-
-                List<int> randomValues = CreateRandomValuesArray(dominoController.HalfsCount);
-                dominoController.Initial(randomValues);
             }
         }
         
@@ -141,7 +141,6 @@ namespace Domino
             DominoController dominoController = Instantiate(_dominoPrefab, transform);
             
             dominoController.IsStand = isStand;
-            dominoController.IsFirst = isFirst;
 
             return dominoController;
         }

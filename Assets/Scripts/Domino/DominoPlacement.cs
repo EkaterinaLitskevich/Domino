@@ -28,10 +28,8 @@ namespace Domino
 
             if (isStand)
             {
-                domino.RectTransform.anchoredPosition = columnDomino.FirstPointPosition;
-
-                CreateListColumn(domino);
                 columnDomino.AddToList(domino);
+                domino.RectTransform.anchoredPosition = columnDomino.FirstPointPosition;
             }
             else
             {
@@ -42,12 +40,6 @@ namespace Domino
                 point = GetPointPosition(_pointsPositionDown);
                 domino.RectTransform.anchoredPosition = point.anchoredPosition;
             }
-        }
-
-        private void CreateListColumn(DominoController domino)
-        {
-            List<DominoController> dominoControllers = new List<DominoController>();
-            dominoControllers.Add(domino);
         }
 
         private void SubscribeDrag(DominoController dominoController)

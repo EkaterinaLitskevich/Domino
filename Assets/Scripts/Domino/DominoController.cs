@@ -16,6 +16,7 @@ namespace Domino
         [SerializeField] private HandlerClick _handlerClick;
         [SerializeField] private int _amountHalfs;
         [SerializeField] private float _plusSize;
+        [SerializeField] private float _distanceBetweenHalf;
     
         private List<Half> _halfs = new List<Half>();
 
@@ -30,7 +31,6 @@ namespace Domino
         public Vector2 DefaultSizeDelta => _defaultSizeDelta;
         public int HalfsCount => _amountHalfs;
         public bool IsStand { get; set; }
-        public bool IsFirst { get; set; }
 
         private void OnEnable()
         {
@@ -84,6 +84,22 @@ namespace Domino
                 
                 index++;
             }
+        }
+
+        private void PlacementHalf(Half half)
+        {
+            if (_halfs.Count > 0 && _halfs.Count < 2)
+            {
+                Vector3 startPosition = _halfs[0].transform.position;
+                _halfs[0].transform.position += new Vector3(0, startPosition.y + _distanceBetweenHalf +  _halfs[0].transform.localScale.y / 2);
+                
+                half.transform.position  += new Vector3(0, startPosition.y - _distanceBetweenHalf - half.transform.localScale.y / 2);
+            }
+            else if(_halfs.Count > 2)
+            {
+                
+            }
+
         }
         
         public void SetValueHalfs(List<int> halfs)
