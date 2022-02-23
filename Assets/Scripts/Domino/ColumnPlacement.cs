@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -5,16 +6,20 @@ namespace Domino
 {
     public class ColumnPlacement : MonoBehaviour
     {
-        private const int PercentScreenWidth = 80;
-        private const int PercentScreenHeight = 70;
-        private const int DistanceBetweenColumnsX = 50;
-        //private const int DistanceBetweenColumnsY = 50;
-        private const int IndentDown = 80;
+        [SerializeField] private Camera _camera;
+        [SerializeField] private float _percentScreenWidth = 80;
+        [SerializeField] private float _percentScreenHeight = 70;
+        [SerializeField] private float _distanceBetweenColumnsX = 1;
+        //[SerializeField] private float _distanceBetweenColumnsY = 0.3f;
+        [SerializeField] private float _indentDown = 1;
 
         private List<Vector2> _positionsColumns = new List<Vector2>();
-
+        private Vector2 _fullScreen;
         private float _gameFieldWidth;
         private float _gameFieldHeight;
+
+        public Camera Camera => _camera;
+        public float IndentDown => _indentDown;
 
         public Vector2 GetPositionColumn()
         {
@@ -23,16 +28,21 @@ namespace Domino
             return point;
         }
         
-        public void CalculateGameField(int amountColumn)
+        public float CalculateGameField(int amountColumn)
         {
-            _gameFieldWidth = Screen.width * PercentScreenWidth / 100;
-            _gameFieldHeight = Screen.height * PercentScreenHeight / 100;
+            _fullScreen = _camera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0));
+            _fullScreen *= 2;
 
-            float gameFieldWidth = _gameFieldWidth - DistanceBetweenColumnsX * amountColumn;
+            _gameFieldWidth = _fullScreen.x * _percentScreenWidth / 100;
+            _gameFieldHeight = _fullScreen.y * _percentScreenHeight / 100;
+            
+            float sumSizeDominoX = _gameFieldWidth - _distanceBetweenColumnsX * (amountColumn - 1);
 
-            float sizeDominoWidth = gameFieldWidth / amountColumn;
+            float  sideSizeDomino = sumSizeDominoX / amountColumn / 2;
 
-            CalculatePositions(sizeDominoWidth, amountColumn);
+            CalculatePositions(sideSizeDomino, amountColumn);
+
+            return sideSizeDomino;
         }
 
         private void CalculatePositions(float sizeDominoWidth, int amountColumn)
@@ -49,7 +59,7 @@ namespace Domino
             float pointX = 0;
             float pointY = 0; 
 
-            pointY += Screen.height / 2 - _gameFieldHeight / 2 + IndentDown; 
+            pointY += _fullScreen.y / 2 - _gameFieldHeight / 2 + _indentDown; 
             
             for (int i = 0; i < firstHalfAmountColumn; i++)
             {
@@ -63,11 +73,11 @@ namespace Domino
                 {
                     if (i == 0)
                     {
-                        point = new Vector2(pointX += sizeDominoWidth / 2 + DistanceBetweenColumnsX / 2, pointY); 
+                        point = new Vector2(pointX += sizeDominoWidth / 2 + _distanceBetweenColumnsX / 2, pointY); 
                     }
                     else
                     {
-                        point = new Vector2(pointX += sizeDominoWidth + DistanceBetweenColumnsX, pointY); 
+                        point = new Vector2(pointX += sizeDominoWidth + _distanceBetweenColumnsX, pointY); 
                     }
                 }
                 
@@ -80,7 +90,7 @@ namespace Domino
             {
                 Vector2 point = new Vector2();
 
-                point = new Vector2(pointX -= sizeDominoWidth + DistanceBetweenColumnsX, pointY);
+                point = new Vector2(pointX -= sizeDominoWidth + _distanceBetweenColumnsX, pointY);
 
                 _positionsColumns.Add(point);
             }

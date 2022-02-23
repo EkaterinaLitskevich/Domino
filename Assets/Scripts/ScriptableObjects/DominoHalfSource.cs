@@ -1,20 +1,22 @@
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.UI;
 
-[CreateAssetMenu(fileName = "DominoHalf", menuName = "Source/DominoHalf")]
-public class DominoHalfSource : SerializedScriptableObject
+namespace ScriptableObjects
 {
-    public Dictionary<int, Image> _halfs = new Dictionary<int, Image>();
-
-    public Image GetImage(int value)
+    [CreateAssetMenu(fileName = "DominoHalf", menuName = "Source/DominoHalf")]
+    public class DominoHalfSource : SerializedScriptableObject
     {
-        if (_halfs[value] != null)
-        {
-            return _halfs[value];
-        }
+        public Dictionary<int, Sprite> _halfs = new Dictionary<int, Sprite>();
 
-        return null;
+        public Sprite GetSprite(int value)
+        {
+            if (_halfs[value] != null)
+            {
+                return _halfs[value];
+            }
+
+            return null;
+        }
     }
 }

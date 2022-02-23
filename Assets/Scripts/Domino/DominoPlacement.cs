@@ -9,9 +9,10 @@ namespace Domino
 {
     public class DominoPlacement : MonoBehaviour
     {
-        [SerializeField] private List<RectTransform> _pointsPositionDown = new List<RectTransform>();
+        [SerializeField] private Camera _camera;
+        [SerializeField] private List<Transform> _pointsPositionDown = new List<Transform>();// create dynamic place down domino
         [SerializeField] private float _offsetBetweenDomino;
-        [SerializeField] private float _dominoVisibilityRange;
+        [SerializeField] private Vector2 _dominoVisibilityRange;
         
         private Subject<CallBackDominoPlacement> listeners = new Subject<CallBackDominoPlacement>();
         private DominoController _dominoCintrollerUsed;
@@ -24,12 +25,12 @@ namespace Domino
         {
             SubscribeDrag(domino);
             
-            RectTransform point = new RectTransform();
+            Vector2 point = new Vector2();
 
             if (isStand)
             {
                 columnDomino.AddToList(domino);
-                domino.RectTransform.anchoredPosition = columnDomino.FirstPointPosition;
+                domino.transform.position = columnDomino.FirstPointPosition;
             }
             else
             {
@@ -38,7 +39,7 @@ namespace Domino
                     _indexElement = 0;
                 }
                 point = GetPointPosition(_pointsPositionDown);
-                domino.RectTransform.anchoredPosition = point.anchoredPosition;
+                domino.transform.position = point;
             }
         }
 
@@ -58,8 +59,10 @@ namespace Domino
         {
             if (_dominoCintrollerUsed != null)
             {
+                Vector2 positionPointerData = _camera.ScreenToWorldPoint(callBackDrag.PointerData.position);
+                
                 _dominoCintrollerUsed.transform.position =
-                    Vector2.Lerp(_dominoCintrollerUsed.transform.position, callBackDrag.PointerData.position, 1f);
+                    Vector2.Lerp(_dominoCintrollerUsed.transform.position, positionPointerData, 1f);
             }
         }
 
@@ -84,7 +87,7 @@ namespace Domino
                 if (!dominoController.IsStand)
                 {
                     _dominoCintrollerUsed = dominoController;
-                    _startPositionDomino =  dominoController.RectTransform.anchoredPosition;
+                    _startPositionDomino =  dominoController.transform.position;
                 }
             }
         }
@@ -92,9 +95,9 @@ namespace Domino
         private void PlacementDominoNextToDomino(PointerEventData eventData)
         {
             RaycastHit2D[] colliders =
-                Physics2D.CircleCastAll(_dominoCintrollerUsed.transform.position, _dominoVisibilityRange, Vector2.zero);
+                Physics2D.CapsuleCastAll(_dominoCintrollerUsed.transform.position, _dominoVisibilityRange, CapsuleDirection2D.Vertical, 0, Vector2.zero);
 
-            _dominoCintrollerUsed.RectTransform.anchoredPosition = _startPositionDomino;
+            _dominoCintrollerUsed.transform.position = _startPositionDomino;
 
             for (int i = 0; i < colliders.Length; i++)
             {
@@ -153,24 +156,36 @@ namespace Domino
         
         private void CalculatePosition(DominoController standDominoController)
         {
-            float halfStandDominoSize = standDominoController.DefaultSizeDelta.y / 2;
-            float halfDominoControllerSize = _dominoCintrollerUsed.DefaultSizeDelta.y / 2;
+            float halfStandDominoSize = standDominoController.SideSizeHalf * standDominoController.HalfsCount / 2;
+            float halfDominoControllerSize = _dominoCintrollerUsed.SideSizeHalf * _dominoCintrollerUsed.HalfsCount / 2;
 
-            Vector2 anchoredPosition = standDominoController.RectTransform.anchoredPosition;
-            float newPositionY = anchoredPosition.y - halfStandDominoSize - _offsetBetweenDomino - halfDominoControllerSize;
-            float newPositionX = anchoredPosition.x;
+            float distanceBetweenHalfs = 0;
 
-            _dominoCintrollerUsed.RectTransform.anchoredPosition = new Vector2(newPositionX ,newPositionY);
+            if (_dominoCintrollerUsed.HalfsCount == 1)
+            {
+                distanceBetweenHalfs = standDominoController.DistanceBetweenHalf;
+            }
+
+            Vector2 position = standDominoController.transform.position;
+            float newPositionY = position.y - halfStandDominoSize - _offsetBetweenDomino - halfDominoControllerSize + distanceBetweenHalfs;
+            float newPositionX = position.x;
+            
+            Debug.Log("halfStandDominoSize = " + halfStandDominoSize);
+            Debug.Log("halfDominoControllerSize = " + halfDominoControllerSize);
+            Debug.Log("position.y = " + position.y);
+            Debug.Log("newPositionY = " + newPositionY);
+
+            _dominoCintrollerUsed.transform.position = new Vector2(newPositionX ,newPositionY);
         }
 
-        private RectTransform GetPointPosition(List<RectTransform> points)
+        private Vector2 GetPointPosition(List<Transform> points)
         {
-            RectTransform point;
+            Transform point;
 
             point = points[_indexElement];
             _indexElement++;
 
-            return point;
+            return point.position;
         }
     }
 }

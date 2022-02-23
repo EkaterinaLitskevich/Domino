@@ -3,6 +3,7 @@ using Controllers;
 using Cysharp.Threading.Tasks;
 using Domino;
 using Random;
+using ScriptableObjects;
 using UI;
 using UnityEngine;
 using Zenject;
@@ -56,7 +57,7 @@ namespace Installers
             await UniTask.WaitUntil(() => loadRequest.isDone);
             
             ColumnSpawner columnSpawner = Container
-                .InstantiatePrefabForComponent<ColumnSpawner>(loadRequest.asset, _canvas.transform);
+                .InstantiatePrefabForComponent<ColumnSpawner>(loadRequest.asset);
             
             BindObjectAsSingle(columnSpawner);
         }
@@ -103,7 +104,7 @@ namespace Installers
             await UniTask.WaitUntil(() => loadRequest.isDone);
             
             DominoSpawner dominoSpawner = Container
-                .InstantiatePrefabForComponent<DominoSpawner>(loadRequest.asset, _canvas.transform);
+                .InstantiatePrefabForComponent<DominoSpawner>(loadRequest.asset);
 
             BindObjectAsSingle(dominoSpawner);
         }

@@ -20,6 +20,7 @@ namespace Domino
         private List<DominoController> _dominoControllersGame = new List<DominoController>();
 
         private CompositeDisposable _disposable = new CompositeDisposable();
+        private float _sideSizeDomino;
 
         [Inject] private DominoPlacement _dominoPlacement;
         [Inject] private ColumnSpawner _columnSpawner;
@@ -39,7 +40,7 @@ namespace Domino
 
         public void CreateStartDomino()
         {
-            _columnSpawner.InitialColumn(_amountColumnStand);
+            _sideSizeDomino = _columnSpawner.InitialColumn(_amountColumnStand);
             CreateDominoStand(null);
             CreateDominoGame();
         }
@@ -82,12 +83,12 @@ namespace Domino
         private void CreateDominoStand(CallBackDominoPlacement callBackDominoPlacement)
         {
             _columnSpawner.ClearColumns();
-            InitialDomino(_dominoControllersStand, _amountColumnStand, true, true, true);
+            InitialDomino(_dominoControllersStand, _amountColumnStand, true);
         }
         
         private void CreateDominoGame()
         {
-            InitialDomino(_dominoControllersGame, _amountDominoGame, false, false, false);
+            InitialDomino(_dominoControllersGame, _amountDominoGame, false);
         }
 
         private void AddToListDominoStand(CallBackDominoPlacement callBackDominoPlacement)
@@ -108,11 +109,12 @@ namespace Domino
             }
         }
 
-        private void InitialDomino(List<DominoController> dominoControllers, int amountColumn, bool isStand, bool isFirst, bool isLast)
+        private void InitialDomino(List<DominoController> dominoControllers, int amountColumn, bool isStand)
         {
             for (int i = 0; i < amountColumn; i++)
             {
-                DominoController dominoController = CreateDomino(isStand, isFirst, isLast);
+                DominoController dominoController = CreateDomino(isStand);
+                dominoController.SideSizeHalf = _sideSizeDomino;
                 
                 List<int> randomValues = CreateRandomValuesArray(dominoController.HalfsCount);
                 dominoController.Initial(randomValues);
@@ -136,7 +138,7 @@ namespace Domino
             return halfs;
         }
         
-        private DominoController CreateDomino(bool isStand, bool isFirst, bool isLast)
+        private DominoController CreateDomino(bool isStand)
         {
             DominoController dominoController = Instantiate(_dominoPrefab, transform);
             

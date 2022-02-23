@@ -8,11 +8,7 @@ namespace Domino
 {
     public class DominoController : MonoBehaviour
     {
-        private const int ValueRotateZ = 180;
-        
         [SerializeField] private Half _halfPrefab;
-        [SerializeField] private BoxCollider2D _collider;
-        [SerializeField] private RectTransform _rectTransform;
         [SerializeField] private HandlerClick _handlerClick;
         [SerializeField] private int _amountHalfs;
         [SerializeField] private float _plusSize;
@@ -24,12 +20,16 @@ namespace Domino
         private Half _halfForCompare;
         private Vector3 _defaultSize;
         private Vector2 _defaultSizeDelta;
-        
-        public RectTransform RectTransform => _rectTransform;
+        private float _sideSizeHalf;
         public HandlerClick HandlerClick => _handlerClick;
         public Half HalfForCompare => _halfForCompare;
-        public Vector2 DefaultSizeDelta => _defaultSizeDelta;
         public int HalfsCount => _amountHalfs;
+        public float DistanceBetweenHalf => _distanceBetweenHalf;
+        public float SideSizeHalf 
+        { 
+            get => _sideSizeHalf; 
+            set => _sideSizeHalf = value ; 
+        }
         public bool IsStand { get; set; }
 
         private void OnEnable()
@@ -52,7 +52,6 @@ namespace Domino
         {
             FillArray(halfs);
             SetHalfForCompare();
-            SetSizeCollider();
             CalculateDefaultSizeDelta();
         }
 
@@ -62,25 +61,27 @@ namespace Domino
             
             for (int i = 0; i < _halfs.Count; i++)
             {
-                _defaultSizeDelta += new Vector2(0, _halfs[i].SizeDelta.y);
+                _defaultSizeDelta += new Vector2(0, _halfs[i].transform.localScale.y);
             }
         }
 
         private void FillArray(List<int> halfs)
         {
-            Half half;
             int index = 0;
 
             for (int i = 0; i < _amountHalfs; i++)
             {
-                half = Instantiate(_halfPrefab, transform);
+                Half half = Instantiate(_halfPrefab, transform);
                 CoreSceneInstallers.Context.Container.Inject(half);
 
+                half.transform.localScale = Vector3.one * _sideSizeHalf; 
                 SetValueHalf(half, halfs);
                 
                 half.gameObject.name = "Half " + index;
                 
                 _halfs.Add(half);
+
+                PlacementHalf(half);
                 
                 index++;
             }
@@ -97,9 +98,13 @@ namespace Domino
             }
             else if(_halfs.Count > 2)
             {
-                
+                _halfs[0].transform.position = transform.position;
             }
-
+            else
+            {
+                half.transform.position  += 
+                    new Vector3(0, _halfs[_halfs.Count - 1].transform.position.y - _distanceBetweenHalf - _halfs[_halfs.Count - 1].transform.localScale.y / 2 - half.transform.localScale.y / 2);
+            }
         }
         
         public void SetValueHalfs(List<int> halfs)
@@ -131,15 +136,18 @@ namespace Domino
 
         public bool RemoveHalf()
         {
-            Vector2 oldPosition = _rectTransform.anchoredPosition;
-            
             for (int i = 0; i < _halfs.Count; i++)
             {
                 if (_halfs[i] == _halfForCompare)
                 {
                     Destroy(_halfs[i].gameObject);
                     _halfs.RemoveAt(i);
-                    
+
+                    if (_halfs.Count == 1)
+                    {
+                        _halfs[0].transform.localPosition = Vector3.zero;
+                    }
+
                     break;
                 }
             }
@@ -151,20 +159,10 @@ namespace Domino
                 return true;
             }
 
-            float halfHalfY = _halfs[0].SizeDelta.y / 2;
-            _rectTransform.anchoredPosition = oldPosition + new Vector2(0, halfHalfY);
-            
             CalculateDefaultSizeDelta();
-            SetSizeCollider();
             SetHalfForCompare();
 
             return false;
-        }
-
-        private void SetSizeCollider()
-        {
-            Vector2 sizeCollider = _collider.size;
-            _collider.size = new Vector2(sizeCollider.x, sizeCollider.y * _amountHalfs);
         }
 
         private void SetSize(CallBackDrag callBackDrag)

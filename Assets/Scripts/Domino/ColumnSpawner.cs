@@ -7,17 +7,19 @@ namespace Domino
     public class ColumnSpawner : MonoBehaviour
     {
         [SerializeField] private ColumnDomino _columnDominoPrefab;
-        [SerializeField] private float _indentForFirstDomino;
 
         private List<ColumnDomino> _columnsDomino = new List<ColumnDomino>();
+        
+        [Inject] private ColumnPlacement _columnPlacement;
+        
         public List<ColumnDomino> ColumnsDomino => _columnsDomino;
 
-        [Inject] private ColumnPlacement _columnPlacement;
-    
-        public void InitialColumn(int amountColumn)
+        public float InitialColumn(int amountColumn)
         {
-            _columnPlacement.CalculateGameField(amountColumn);
+            float sideSizeDomino = _columnPlacement.CalculateGameField(amountColumn);
             CreateColumn(amountColumn);
+
+            return sideSizeDomino;
         }
 
         public void ClearColumns()
@@ -33,9 +35,12 @@ namespace Domino
             for (int i = 0; i < amountColumn; i++)
             {
                 ColumnDomino columnDomino = Instantiate(_columnDominoPrefab, transform);
-                columnDomino.RectTransform.anchoredPosition = _columnPlacement.GetPositionColumn();
-                
-                columnDomino.SetFirstPointPositionDomino(new Vector3(columnDomino.RectTransform.anchoredPosition.x, Screen.height / 2 - 200, 0));
+                columnDomino.transform.position = _columnPlacement.GetPositionColumn();
+
+                Vector2 fullScreen = _columnPlacement.Camera.ScreenToWorldPoint(new Vector3(0, Screen.height, 0));
+                Vector3 positionColumn = new Vector3(columnDomino.transform.position.x, fullScreen.y - _columnPlacement.IndentDown, 0);
+
+                columnDomino.SetFirstPointPositionDomino(positionColumn);
                 
                 _columnsDomino.Add(columnDomino);
             }
