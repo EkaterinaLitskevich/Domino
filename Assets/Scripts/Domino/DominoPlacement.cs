@@ -170,11 +170,6 @@ namespace Domino
             float newPositionY = position.y - halfStandDominoSize - _offsetBetweenDomino - halfDominoControllerSize + distanceBetweenHalfs;
             float newPositionX = position.x;
             
-            Debug.Log("halfStandDominoSize = " + halfStandDominoSize);
-            Debug.Log("halfDominoControllerSize = " + halfDominoControllerSize);
-            Debug.Log("position.y = " + position.y);
-            Debug.Log("newPositionY = " + newPositionY);
-
             _dominoCintrollerUsed.transform.position = new Vector2(newPositionX ,newPositionY);
         }
 
